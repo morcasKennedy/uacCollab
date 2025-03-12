@@ -1,8 +1,9 @@
 <?php
     $routes = [
-        'projects' => 'projects.php',
+        'projects' => 'projects',
+        'affectations' => 'affectations',
     ];
 
     $routes_get = [
-
+        'affectations' => 'affectations',
     ];

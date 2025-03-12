@@ -13,35 +13,22 @@
             <ul class="pc-navbar">
                 <li class="pc-item bg-primary">
                     <a onclick="redirect('./')" class="pc-link text-white">
-                        <span class="pc-micon"><i class="ti ti-dashboard text-white"></i></span>
+                        <span class="pc-micon"><i class="bi bi-house-fill text-white"></i></span>
                         <b><span class="pc-mtext">Accueil</span></b>
                     </a>
                 </li>
                 <li class="pc-item">
                     <a onclick="redirect('./projects')"class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-typography"></i></span>
+                        <span class="pc-micon"><i class="bi bi-sign-no-parking"></i></span>
                         <span class="pc-mtext">Projets</span>
                     </a>
                 </li>
                 <li class="pc-item">
-                    <a href="../elements/bc_color.html" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-color-swatch"></i></span>
-                        <span class="pc-mtext">Encadreurs</span>
+                    <a onclick="redirect('./affectations')" class="pc-link">
+                        <span class="pc-micon"><i class="bi bi-bookmarks"></i></span>
+                        <span class="pc-mtext">Affectation</span>
                     </a>
                 </li>
-                <li class="pc-item">
-                    <a href="../elements/bc_color.html" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-color-swatch"></i></span>
-                        <span class="pc-mtext">Soumettre</span>
-                    </a>
-                </li>
-                <li class="pc-item">
-                    <a href="../elements/bc_color.html" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-color-swatch"></i></span>
-                        <span class="pc-mtext">Correction</span>
-                    </a>
-                </li>
-
             </ul>
             <a href="" class="logout-btn">Deconnexion</a>
         </div>

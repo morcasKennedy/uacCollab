@@ -66,5 +66,107 @@ function show_message(content, color = 'default', time = 5) {
     bootstrapToast.show();
 }
 
+async function save(data, url, modal = null) {
+  try {
+    const response = await $.ajax({
+      url: url,
+      type: 'POST',
+      data: data,
+      dataType: 'json',
+    });
 
-export {show_message };
+    const { content, status } = response;
+
+    show_message(content, status);
+
+    if (status === 'success') {
+      if (modal) {
+        setTimeout(() => {
+          $('#' + modal).modal('hide');
+        }, 10);
+      }
+      return true;
+    }
+
+    return false;
+
+  } catch (error) {
+    show_message("Une erreur s'est produite. Veuillez réessayer : " + error, 'error');
+    console.error('Erreur de connexion :', error);
+    return false;
+  }
+}
+
+function handle_display(params) {
+  const { data, url, container, searchQuery} = params;
+  $.ajax({
+      url: url,
+      type: 'POST',
+      data: data,
+      success: function (response) {
+          $('#' + container).html(response);
+          if (searchQuery) {
+            filter_data('#' + container, searchQuery);
+        }
+      },
+      error: function (xhr, status, error) {
+          // Affiche un message d'erreur en cas d'échec de la requête
+          show_message("Une erreur s'est produite, veuillez réessayer. : " + error, 'error');
+      }
+  });
+}
+
+function filter_data(container, searchQuery) {
+  // Assurez-vous que container est un objet jQuery
+  const $container = $(container); // Convertir en jQuery si nécessaire
+  const rows = $container.find('tr'); // Trouver uniquement les lignes dans le tbody
+  let found = false; // Variable pour vérifier si des données sont trouvées
+
+  // Applique le filtrage sur chaque ligne du tbody
+  rows.each(function() {
+      const row = $(this);
+      let match = false;
+
+      // Rechercher dans chaque cellule de la ligne (th et td)
+      row.find('th, td:not([hidden])').each(function() {
+          const cell = $(this);
+          if (cell.text().toLowerCase().includes(searchQuery.toLowerCase())) {
+              match = true;
+          }
+      });
+
+      // Afficher ou masquer la ligne en fonction du résultat de la recherche
+      row.toggle(match);
+
+      // Si une correspondance est trouvée, mettre à jour la variable `found`
+      if (match) {
+          found = true;
+      }
+  });
+
+  // Afficher un message si aucune donnée n'est trouvée
+  if (!found) {
+      show_message("Aucune donnée ne correspond à votre recherche.", 'warning', 15);
+  }
+}
+
+
+
+/**
+ * Fonction pour récupérer la valeur d'un champ de formulaire
+ * @param {*} value L'ID du champ dont la valeur doit être récupérée
+ * @returns {string} La valeur du champ spécifié
+ */
+function get_value(value) {
+  // Récupère la valeur du champ dont l'ID est passé en paramètre
+  return $('#' + value).val(); // Retourne la valeur du champ
+}
+
+function get_controller_url(file_name) {
+  // Génère l'URL du contrôleur en concaténant le module et le fichier
+  return './controllers/controller-' + file_name + '.php';
+}
+
+function redirect(url) {window.location.href = url;}
+
+export {show_message, get_value, redirect, save, get_controller_url, handle_display };
