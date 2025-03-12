@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="./assets/css/style.css" id="main-style-link">
     <link rel="stylesheet" href="./assets/css/style-preset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="./assets/css/plugins/dataTables.bootstrap5.min.css">
+
 
     <style>
     .img-collab {
@@ -108,6 +110,45 @@
     a {
         cursor: pointer;
     }
+    .star {
+        font-size: 1.2rem;
+        color: red;
+    }
+    #base-style_length, #base-style_filter {
+        display: none;
+    }
+    .input-search {
+        display:flex;
+        /* width:100%; */
+        padding: 4px;
+        font-size:1rem;
+        /* font-weight:400; */
+        line-height:1.5;
+        color:var(--bs-body-color);
+        -webkit-appearance:none;
+        -moz-appearance:none;
+        appearance:none;
+        background-color: var(--bs-body-bg);
+        background-clip:padding-box;
+        border: 1px solid #CED4DA;
+        border-radius:var(--bs-border-radius);
+        justify-content: center;
+        align-items: center;
+        transition:border-color .15s ease-in-out,box-shadow .15s ease-in-out
+    }
+    .input-search:focus {
+        border: 1px solid #1890FF;
+    }
+    .input-search input {
+        border: 0;
+        width: 100%;
+        padding-left: 6px;
+    }
+    .input-search input:focus, .input-search .form-control {
+        border: 0;
+        outline: 0;
+    }
+
     </style>
 
 </head>
@@ -142,6 +183,23 @@
     <script src="./assets/js/fonts/custom-font.js"></script>
     <script src="./assets/js/pcoded.js"></script>
     <script src="./assets/js/plugins/feather.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="./assets/js/plugins/jquery.dataTables.min.js"></script>
+    <script src="./assets/js/plugins/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $('#base-style').DataTable();
+
+        // [ no style ]
+        $('#no-style').DataTable();
+
+        // [ compact style ]
+        $('#compact').DataTable();
+
+        // [ hover style ]
+        $('#table-style-hover').DataTable();
+    </script>
 
 </body>
 
