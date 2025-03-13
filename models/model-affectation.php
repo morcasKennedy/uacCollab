@@ -64,7 +64,7 @@
             ]);
         }
 
-        public function get_all($annee) {
+        public function get_all($annee, $promotion) {
             $query = "SELECT
                 affectation.id AS id,
                 affectation.dates AS date,
@@ -84,11 +84,13 @@
                 promotion.id = affectation.promotion AND
                 departement.id = promotion.departement AND
                 affectation.status = ? AND
-                affectation.annee = ?";
+                affectation.annee = ? AND
+                affectation.promotion = ?";
             $stmt = $this->db->prepare($query);
             $stmt->execute([
                 $this->status,
-                $annee
+                $annee,
+                $promotion
             ]);
 
             $result = [];
