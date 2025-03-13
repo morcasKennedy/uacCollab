@@ -17,6 +17,10 @@ $(document).ready(function() {
     }
 
     get_data();
+    get_annee();
+    get_promotion();
+    get_encadreur();
+    get_etudiant();
 
     // Save or update affectation btn
     $(document).on('click', '#save', async (e) => {
@@ -42,6 +46,7 @@ $(document).ready(function() {
     function get_data() {
         const data = {
             annee: annee,
+            promotion: promotion,
             action: 'load',
         };
         const url = fx.get_controller_url('affectation');
@@ -55,6 +60,7 @@ $(document).ready(function() {
         const searchValue = $(this).val().trim(); // Récupérer la valeur de recherche
         const data = {
             annee: annee,
+            promotion: promotion,
             action: 'load',
         };
 
@@ -69,6 +75,48 @@ $(document).ready(function() {
             searchQuery: searchValue
         });
     });
+
+    // Get annee from controller
+    function get_annee() {
+        const data = {
+            action: 'get_annee'
+        };
+
+        const url = fx.get_controller_url('api');
+        fx.fill_select(url, data, 'annee');
+    }
+
+    // get promotion
+    function get_promotion() {
+        const data = {
+            action: 'get_promotion'
+        };
+
+        const url = fx.get_controller_url('api');
+        fx.fill_select(url, data, 'promotion');
+    }
+
+    // get encadreur
+    function get_encadreur() {
+        const data = {
+            action: 'get_encadreur'
+        };
+
+        const url = fx.get_controller_url('api');
+        fx.fill_select(url, data, 'encadreur');
+    }
+
+    // get etudiant
+    function get_etudiant() {
+        const data = {
+            annee: annee,
+            promotion: promotion,
+            action: 'get_etudiant'
+        };
+
+        const url = fx.get_controller_url('api');
+        fx.fill_select(url, data, 'etudiant');
+    }
 
     // Next event
     $(document).on('click', '#next', function() {

@@ -1,5 +1,5 @@
 <?php
-    class Fucntions {
+    class Functions {
         public static function generate_color() {
             $r = rand(0, 150);
             $g = rand(0, 150);

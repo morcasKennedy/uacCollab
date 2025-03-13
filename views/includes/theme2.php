@@ -38,9 +38,6 @@
 <body>
 
     <?php
-
-        require_once 'nav.php';
-        require_once 'header.php';
         print $page_content;
     ?>
 
@@ -48,7 +45,7 @@
         aria-atomic="true" id="toast-example">
         <div class="toast-header">
             <i class="bi bi-bell me-2" id="icon"></i>
-            <div class="me-auto fw-semibold" id="title"></div>
+            <div class="me-auto fw-semibold" id="title">Bootstrap</div>
             <small>Just now</small>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
@@ -71,16 +68,16 @@
     <script src="./assets/js/plugins/dataTables.bootstrap5.min.js"></script>
 
     <script>
-    $('#base-style').DataTable();
+        $('#base-style').DataTable();
 
-    // [ no style ]
-    $('#no-style').DataTable();
+        // [ no style ]
+        $('#no-style').DataTable();
 
-    // [ compact style ]
-    $('#compact').DataTable();
+        // [ compact style ]
+        $('#compact').DataTable();
 
-    // [ hover style ]
-    $('#table-style-hover').DataTable();
+        // [ hover style ]
+        $('#table-style-hover').DataTable();
     </script>
 
 </body>

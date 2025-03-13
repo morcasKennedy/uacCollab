@@ -66,14 +66,15 @@
             case 'load':
                 try{
                     $annee = htmlspecialchars($_POST['annee']);
-                    $result = $affectation->get_all($annee);
+                    $promotion = htmlspecialchars($_POST['promotion']);
+                    $result = $affectation->get_all($annee, $promotion);
                     if(! empty($result)) {
                         $i = 1;
                         foreach($result as $row) {
                             ?>
                                 <tr>
                                     <th><?=$i++ ?></th>
-                                    <td><?=Fucntions::date_format($row->date) . ', ' . substr($row->date, 11, 5) ?></td>
+                                    <td><?=Functions::date_format($row->date) . ', ' . substr($row->date, 11, 5) ?></td>
                                     <td><?=$row->encadreur_noms ?></td>
                                     <td><?=$row->etudiant_noms ?></td>
                                     <td><?=$row->promotion_description ?></td>
@@ -85,6 +86,12 @@
                                 </tr>
                             <?php
                         }
+                    } else {
+                        ?>
+                            <tr>
+                                <td colspan="7" class="text-center">Aucun résultat trouvé</td>
+                            </tr>
+                        <?php
                     }
                 }
                 catch(PDOException $e) {

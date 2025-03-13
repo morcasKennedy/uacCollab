@@ -1,3 +1,6 @@
+DROP DATABASE uaccolab;
+CREATE DATABASE uaccolab;
+USE uaccolab;
 CREATE TABLE etudiant (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     matricule TEXT,
@@ -72,8 +75,10 @@ CREATE TABLE affectation (
 
 CREATE TABLE projet (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    dates DATETIME,
     titre TEXT,
     description TEXT,
+    etudiant BIGINT,
     encadreur BIGINT,
     backgroud TEXT,
     running INT,
@@ -114,6 +119,13 @@ INSERT INTO annee (description, status) VALUES
 ('2023-2024', 1),
 ('2024-2025', 1),
 ('2025-2026', 1);
+
+INSERT INTO departement (description, status) VALUES
+('Informatique de gestion', 1),
+('Management', 1),
+('Genie informatique', 1),
+('Developpement', 1),
+('Psychologie', 1);
 
 INSERT INTO promotion (description, departement, status) VALUES
 ('L1', 1, 1),

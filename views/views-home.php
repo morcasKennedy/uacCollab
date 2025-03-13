@@ -1,15 +1,7 @@
 <?php
     $page_title = 'UAC collab | Accueil';
     ob_start();
-    function generateDarkColor() {
-        // Génère des valeurs entre 0 et 150 pour éviter les couleurs trop claires
-        $r = rand(0, 150);
-        $g = rand(0, 150);
-        $b = rand(0, 150);
 
-        // Convertit en format hexadécimal
-        return sprintf("#%02X%02X%02X", $r, $g, $b);
-    }
 ?>
 
 <title><?=$page_title ?></title>
@@ -26,27 +18,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 p-2">
-                        <div class="card p-0">
-                            <div class="card-hearder p-3 bg-img text-start" style="background: <?=generateDarkColor();?>;">
-                                <div>
-                                    <h4 class="text-white">Title</h4>
-                                    <b class="text-white">user</b>
-                                </div>
-                            </div>
-                            <div class="card-icon d-flex justify-content-end px-3">
-                                <img src="assets/themes/logo.png" class="img">
-                            </div>
-                            <div class="ml-auto card-body px-3 pt-2 pb-3">
-                                <span class="text-muted">Lorem ipsum dolor sit ametkdkdkdkd consectetur adipisicing
-                                    elit. Voluptatem, dolor.</span>
-                            </div>
-                            <div class="card-footer p-3">
-                                <a href="" class="mx-2">Ouvrir</a>
-                                <a href="" class="mx-2">Chat now</a>
-                            </div>
-                        </div>
+                <div class="row" id="container">
+                    <div class="col-12 justify-content-center d-flex align-items-center" style="min-height: 70vh;">
+                        <h4>Chargement encours...</h4>
                     </div>
                 </div>
             </div>
@@ -67,27 +41,27 @@
       <div class="modal-body">
         <div>
             <label for="">Entrez le nom du projet</label>
-            <input type="text" class="form-control mt-2" placeholder="Entrez le nom du projet">
+            <input autocomplete="off" id="titre" type="text" class="form-control mt-2" placeholder="Entrez le nom du projet">
         </div>
         <div class="my-3">
             <label for="">Description</label>
-            <textarea class="form-control mt-2" placeholder="Entrez la description du projet"></textarea>
+            <textarea id="description" class="form-control mt-2" placeholder="Entrez la description du projet"></textarea>
         </div>
         <div class="my-3">
             <label for="">Sélectionnez un étudiant</label>
-            <select class="form-select mt-2">
+            <select id="etudiant" class="form-select mt-2">
                 <option value="">MORINGA YILA BIENVENU</option>
             </select>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary">Créer</button>
+        <button id="save" class="btn btn-primary">Créer</button>
       </div>
     </div>
   </div>
 </div>
 
-<script src="./app/module/controllers/home.js" type="module"></script>
+<script src="./app/module/controllers/project.js" type="module"></script>
 <?php
     $page_content = ob_get_clean();
     require_once 'views/includes/theme.php';

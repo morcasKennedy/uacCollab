@@ -2,7 +2,7 @@
 <nav class="pc-sidebar ">
     <div class="navbar-wrapper">
         <div class="m-header">
-            <a href="../dashboard/index.html"
+            <a href="./"
                 class="b-brand text-dark d-flex justify-content-between align-items-center">
                 <!-- ========   Change your logo from here   ============ -->
                 <img src="./assets/themes/logo.png" class="img-collab" alt="logo">
@@ -18,17 +18,18 @@
                     </a>
                 </li>
                 <li class="pc-item">
-                    <a onclick="redirect('./projects')"class="pc-link">
-                        <span class="pc-micon"><i class="bi bi-sign-no-parking"></i></span>
-                        <span class="pc-mtext">Projets</span>
-                    </a>
-                </li>
-                <li class="pc-item">
                     <a onclick="redirect('./affectations')" class="pc-link">
                         <span class="pc-micon"><i class="bi bi-bookmarks"></i></span>
                         <span class="pc-mtext">Affectation</span>
                     </a>
                 </li>
+                <li class="pc-item">
+                    <a onclick="redirect('./projects')"class="pc-link">
+                        <span class="pc-micon"><i class="bi bi-sign-no-parking"></i></span>
+                        <span class="pc-mtext">Projets</span>
+                    </a>
+                </li>
+
             </ul>
             <a href="" class="logout-btn">Deconnexion</a>
         </div>

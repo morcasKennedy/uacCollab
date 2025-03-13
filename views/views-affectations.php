@@ -1,5 +1,7 @@
 <?php
     require_once 'app/module/functions/functions.php';
+    require_once 'config/config.php';
+    require_once 'models/model-affectation.php';
     $title = 'Affectation des étudiants';
     $page_title = 'UAC collab | ' . $title;
 
@@ -7,9 +9,11 @@
     $parts = explode('-', $_GET['url']);
     $annee = isset($parts[1]) ? $parts[1] : null;
     $promotion = isset($parts[2]) ? $parts[2] : null;
-    require_once 'config/config.php';
 
     $db = (new Connexion())->get_connexion();
+
+    $aff = new Affectation($db);
+    $res = $aff->get_all($annee, $promotion);
     ob_start();
 ?>
 
@@ -40,13 +44,13 @@
                                         </div>
                                         <div class="card-body">
                                             <div class="justify-content-end d-flex">
-                                            <form class="input-search col-xl-4 col-lg-4 col-md-6">
+                                            <form class="input-search col-xl-4 col-lg-4 col-md-6 mb-3">
                                                 <i data-feather="search" class="icon-search"></i>
                                                 <input autocomplete="off" id="search" type="search" placeholder="Recherche. . .">
                                             </form>
                                             </div>
-                                            <div class="dt-responsive table-responsive">
-                                                <table id="base-style" class="table table-striped table-bordered table-sm nowrap">
+                                            <div class="table-responsive">
+                                                <table  class="table table-striped table-bordered table-sm nowrap">
                                                     <thead class="pt-3">
                                                         <tr>
                                                             <th>#</th>
@@ -70,13 +74,13 @@
                                             <div>
                                                 <label for="">Sélectionnez l'année académique</label>
                                                 <select id="annee" class="form-select mt-2">
-                                                    <option value="1">MORINGA YILA BIENVENU</option>
+                                                    <option value="" selected disabled>Chargement encours...</option>
                                                 </select>
                                             </div>
                                             <div class="my-3">
                                                 <label for="">Sélectionnez une promotion</label>
                                                 <select id="promotion" class="form-select mt-2">
-                                                    <option value="2">MORINGA YILA BIENVENU</option>
+                                                    <option value="" selected disabled>Chargement encours...</option>
                                                 </select>
                                             </div>
                                             <div class="my-3 text-end">
@@ -106,18 +110,18 @@
                 <div>
                     <label for="">Sélectionnez l'enseigant</label>
                     <select id="encadreur" class="form-select mt-2">
-                        <option value="1">MORINGA YILA BIENVENU</option>
+                        <option value="" selected disabled>Chargement encours...</option>
                     </select>
                 </div>
                 <div class="my-4">
                     <label for="">Sélectionnez un étudiant</label>
                     <select id="etudiant" class="form-select mt-2">
-                        <option value="2">MORINGA YILA BIENVENU</option>
+                        <option value="" selected disabled>Chargement encours...</option>
                     </select>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="save" class="btn btn-primary" >Enregistrer</button>
+                <button id="save" class="btn btn-primary" > Enregistrer</button>
             </div>
         </div>
     </div>
