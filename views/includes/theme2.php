@@ -79,6 +79,7 @@
         // [ hover style ]
         $('#table-style-hover').DataTable();
     </script>
+<script> $(document).ready(function(){$('input[type="password"]').each(function(){let e=$(this);if(!e.parent().hasClass("password-container")){let s=$('<div class="password-container"></div>');e.before(s),s.append(e);let a=$('<i class="eye-icon bi bi-eye"></i>');s.append(a),a.on("click",function(){"password"===e.attr("type")?(e.attr("type","text"),a.removeClass("bi-eye").addClass("bi-eye-slash")):(e.attr("type","password"),a.removeClass("bi-eye-slash").addClass("bi-eye"))})}})});</script>
 
 </body>
 

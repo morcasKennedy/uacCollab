@@ -63,6 +63,7 @@
             </div>
         </div>
     </div>
+    <script>function redirect(url) {window.location.href = url;}</script>
     <!-- [ Main Content ] end -->
     <!-- Required Js -->
     <script src="assets/js/plugins/popper.min.js"></script>
@@ -72,7 +73,7 @@
     <script src="assets/js/pcoded.js"></script>
     <script src="assets/js/plugins/feather.min.js"></script>
 
-    
+
 
 </body>
 <!-- [Body] end -->

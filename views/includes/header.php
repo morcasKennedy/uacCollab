@@ -43,7 +43,7 @@
                 <li class="dropdown pc-h-item">
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" aria-expanded="false">
-                        <i class="ti ti-mail"></i>
+                        <i class="bi bi-messenger"></i>
                     </a>
                     <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
                         <div class="dropdown-header d-flex align-items-center justify-content-between">
@@ -137,40 +137,13 @@
                                         class="ti ti-power text-danger"></i></a>
                             </div>
                         </div>
-                        <ul class="nav drp-tabs nav-fill nav-tabs" id="mydrpTab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="drp-t1" data-bs-toggle="tab"
-                                    data-bs-target="#drp-tab-1" type="button" role="tab" aria-controls="drp-tab-1"
-                                    aria-selected="true"><i class="ti ti-user"></i> Profile</button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="drp-t2" data-bs-toggle="tab" data-bs-target="#drp-tab-2"
-                                    type="button" role="tab" aria-controls="drp-tab-2" aria-selected="false"><i
-                                        class="ti ti-settings"></i> Setting</button>
-                            </li>
-                        </ul>
+                        <hr>
                         <div class="tab-content" id="mysrpTabContent">
                             <div class="tab-pane fade show active" id="drp-tab-1" role="tabpanel"
                                 aria-labelledby="drp-t1" tabindex="0">
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ti ti-edit-circle"></i>
-                                    <span>Edit Profile</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ti ti-user"></i>
-                                    <span>View Profile</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ti ti-clipboard-list"></i>
-                                    <span>Social Profile</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ti ti-wallet"></i>
-                                    <span>Billing</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
+                                <a href="./login-logout" class="dropdown-item">
                                     <i class="ti ti-power"></i>
-                                    <span>Logout</span>
+                                    <span>Deconnexion</span>
                                 </a>
                             </div>
                             <div class="tab-pane fade" id="drp-tab-2" role="tabpanel" aria-labelledby="drp-t2"

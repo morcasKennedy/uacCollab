@@ -1,7 +1,12 @@
 <?php
     $page_title = 'UAC collab | Accueil';
     ob_start();
-
+    session_start();
+    $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
+    if(empty($_SESSION['user']['id']) OR ! isset($_SESSION['user']['id'])) {
+        header('location:./login');
+        exit;
+    }
 ?>
 
 <title><?=$page_title ?></title>
@@ -25,11 +30,14 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
-<a data-bs-toggle="modal" data-bs-target="#exampleModalToggle" class="floating-btn text-white">+</a>
+<?php
+    if($role != 'etudiant') {
+        ?><a data-bs-toggle="modal" data-bs-target="#exampleModalToggle" class="floating-btn text-white">+</a><?php
+    }
+?>
 
 <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
@@ -50,7 +58,7 @@
         <div class="my-3">
             <label for="">Sélectionnez un étudiant</label>
             <select id="etudiant" class="form-select mt-2">
-                <option value="">MORINGA YILA BIENVENU</option>
+                <option value="" selected disabled>Chargement encours...</option>
             </select>
         </div>
       </div>

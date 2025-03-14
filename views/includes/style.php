@@ -1,4 +1,24 @@
 <style>
+    .password-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.password-container input {
+    padding-right: 35px; /* Pour laisser de la place à l'icône */
+    width: 100%;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+}
+
 .img-collab {
     width: 40px;
     height: 40px;
@@ -184,4 +204,5 @@ a {
         transform: rotate(360deg);
     }
 }
+
 </style>

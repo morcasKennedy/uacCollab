@@ -27,7 +27,7 @@
                     }
                 }
                 catch (Exception $ex) {
-                    // En cas d'exception, retourner un message d'avertissement avec le message de l'exception
+                    // In case of an exception, return a warning message with the exception message.
                     $response['status'] = 'warning';
                     $response['content'] = 'Exception ' . $ex->getMessage();
                 }
@@ -45,7 +45,7 @@
                     }
                 }
                 catch (Exception $ex) {
-                    // En cas d'exception, retourner un message d'avertissement avec le message de l'exception
+                    // In case of an exception, return a warning message with the exception message.
                     $response['status'] = 'warning';
                     $response['content'] = 'Exception ' . $ex->getMessage();
                 }
@@ -63,7 +63,7 @@
                     }
                 }
                 catch (Exception $ex) {
-                    // En cas d'exception, retourner un message d'avertissement avec le message de l'exception
+                    // In case of an exception, return a warning message with the exception message.
                     $response['status'] = 'warning';
                     $response['content'] = 'Exception ' . $ex->getMessage();
                 }
@@ -83,12 +83,11 @@
                     }
                 }
                 catch (Exception $ex) {
-                    // En cas d'exception, retourner un message d'avertissement avec le message de l'exception
+                    // In case of an exception, return a warning message with the exception message.
                     $response['status'] = 'warning';
                     $response['content'] = 'Exception ' . $ex->getMessage();
                 }
             break;
-
             // Log all users
             case 'login':
                 header('Content-Type: application/json');
@@ -97,6 +96,7 @@
                     $email = htmlspecialchars($_POST['email']);
                     $password = htmlspecialchars($_POST['password']);
 
+                    // Check if it is an email address, a phone number, or a matriculation number.
                     $label = '';
                     if(is_numeric($email)) {
                         $label = 'Le numéro de téléphone ';
@@ -106,8 +106,12 @@
                         $label = 'Le matricule ';
                     }
 
+                    // Check if the user has filled in the required fields.
                     if(! empty($email) && ! empty($password)) {
                         $result = $API->log_users($email);
+                        $result2 = $API->log_etudiants($email);
+
+                        // Authenticate users (supervisors).
                         if(! empty($result)) {
                             foreach($result as $row) {
                                 if($row->mot_de_passe == $password) {
@@ -116,6 +120,19 @@
                                     $response['status'] = 'success';
                                     $response['content'] = 'Connexion reussie';
 
+                                } else {
+                                    $response['status'] = 'error';
+                                    $response['content'] = 'Le mot de passe que vous avez tapé est incorrect, veuillez réessayer.';
+                                }
+                            }
+                            // Authenticate student.
+                        } elseif(! empty($result2)) {
+                            foreach($result2 as $row) {
+                                if($row->mot_de_passe == $password) {
+                                    $_SESSION['user']['id'] = $row->id;
+                                    $_SESSION['user']['role'] = 'etudiant';
+                                    $response['status'] = 'success';
+                                    $response['content'] = 'Connexion reussie';
                                 } else {
                                     $response['status'] = 'error';
                                     $response['content'] = 'Le mot de passe que vous avez tapé est incorrect, veuillez réessayer.';
@@ -131,7 +148,7 @@
                     }
                 }
                 catch (Exception $ex) {
-                    // En cas d'exception, retourner un message d'avertissement avec le message de l'exception
+                    // In case of an exception, return a warning message with the exception message.
                     $response['status'] = 'warning';
                     $response['content'] = 'Exception ' . $ex->getMessage();
                 }
@@ -154,7 +171,7 @@
                     }
                 }
                 catch (Exception $ex) {
-                    // En cas d'exception, retourner un message d'avertissement avec le message de l'exception
+                    // In case of an exception, return a warning message with the exception message.
                     $response['status'] = 'warning';
                     $response['content'] = 'Exception ' . $ex->getMessage();
                 }

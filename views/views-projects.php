@@ -3,6 +3,14 @@
     $title = 'Mes projets';
     $page_title = 'UAC collab | ' . $title;
     ob_start();
+
+    $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
+
+    if(empty($_SESSION['user']['id']) OR ! isset($_SESSION['user']['id'])) {
+        header('location:./login');
+        exit;
+    }
+
 ?>
 
 <title><?=$page_title ?></title>
@@ -30,7 +38,11 @@
     </div>
 </div>
 
-<a data-bs-toggle="modal" data-bs-target="#exampleModalToggle" class="floating-btn text-white">+</a>
+<?php
+    if($role != 'etudiant') {
+        ?><a data-bs-toggle="modal" data-bs-target="#exampleModalToggle" class="floating-btn text-white">+</a><?php
+    }
+?>
 
 <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">

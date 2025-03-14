@@ -77,47 +77,80 @@
                 $encadreur_id = ! empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
                 $result = $project->get_all();
                 $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
+                $count = false;
                 if(! empty($result)) {
                     foreach($result as $data) {
-                        if($data->encadreur_id != $encadreur_id) {
-                            continue;
-                        }
-                        ?>
-                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 p-2">
-                                <div class="card p-0 ">
-                                    <div class="card-hearder p-3 bg-img text-start " style="background: <?=$data->backgroud ?>;">
-                                        <div>
-                                            <div class="one-truncate"><h4 class="text-white"><?=$data->titre ?> </h4></div>
-                                            <b class="text-white one-truncate"><?=$data->nom . ' ' . $data->postnom . ' ' . $data->prenom ?> </b>
-                                            <small><b class="one-truncate prom"><?=$data->promotion ?></b></small>
+                        // Filter project for encadreurs
+                        if($data->encadreur_id == $encadreur_id && $role == 'encadreur') {
+                            $count = true;
+                            ?>
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 p-2">
+                                    <div class="card p-0 ">
+                                        <div class="card-hearder p-3 bg-img text-start " style="background: <?=$data->backgroud ?>;">
+                                            <div>
+                                                <div class="one-truncate"><h4 class="text-white"><?=$data->titre ?> </h4></div>
+                                                <b class="text-white one-truncate"><?=$data->nom . ' ' . $data->postnom . ' ' . $data->prenom ?> </b>
+                                                <small><b class="one-truncate prom"><?=$data->promotion ?></b></small>
+                                            </div>
+                                        </div>
+                                        <div class="card-icon d-flex justify-content-end px-3">
+                                            <img src="assets/etudiants/<?=$data->image ?>" class="img">
+                                        </div>
+                                        <div class="ml-auto card-body px-3 pt-0 pb-3" style="min-height: 11vh;">
+                                            <span class="text-muted custom-truncate"><?=$data->description ?></span>
+                                        </div>
+                                        <div class="card-footer p-3">
+                                            <a onclick="redirect('./openProjects-<?=$data->id ?>')" class="mx-2 text-primary">Ouvrir</a>
                                         </div>
                                     </div>
-                                    <div class="card-icon d-flex justify-content-end px-3">
-                                        <img src="assets/etudiants/<?=$data->image ?>" class="img">
-                                    </div>
-                                    <div class="ml-auto card-body px-3 pt-0 pb-3" style="min-height: 11vh;">
-                                        <span class="text-muted custom-truncate"><?=$data->description ?></span>
-                                    </div>
-                                    <div class="card-footer p-3">
-                                        <a onclick="redirect('./openProjects-<?=$data->id ?>')" class="mx-2 text-primary">Ouvrir</a>
-                                        <a href="" class="mx-2">Chat now</a>
+                                </div>
+                            <?php
+                            // Filter project for students
+                        } elseif($data->id_inscription == $encadreur_id && $role == 'etudiant') {
+                            $count = true;
+                            ?>
+                                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 p-2">
+                                    <div class="card p-0 ">
+                                        <div class="card-hearder p-3 bg-img text-start " style="background: <?=$data->backgroud ?>;">
+                                            <div>
+                                                <div class="one-truncate"><h4 class="text-white"><?=$data->titre ?> </h4></div>
+                                                <b class="text-white one-truncate"><?=$data->nom . ' ' . $data->postnom . ' ' . $data->prenom ?> </b>
+                                                <small><b class="one-truncate prom"><?=$data->promotion ?></b></small>
+                                            </div>
+                                        </div>
+                                        <div class="card-icon d-flex justify-content-end px-3">
+                                            <img src="assets/etudiants/<?=$data->image ?>" class="img">
+                                        </div>
+                                        <div class="ml-auto card-body px-3 pt-0 pb-3" style="min-height: 11vh;">
+                                            <span class="text-muted custom-truncate"><?=$data->description ?></span>
+                                        </div>
+                                        <div class="card-footer p-3">
+                                            <a onclick="redirect('./openProjects-<?=$data->id ?>')" class="mx-2 text-primary">Ouvrir</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        <?php
+                            <?php
+                        }
                     }
-                } else {
+                }
+                // Verifier si l'utilisateur connecter ne participer pas a un projet alors on va lui demander de creer un projet si possible
+                if(! $count) {
                     ?>
                         <div class="container mt-4 d-flex flex-column align-items-center justify-content-center" style="min-height: 30vh;">
-                        <img src="assets/themes/data.png"
-                            alt="Aucune donnée trouvée"
-                            class="img-fluid mb-4"
-                            style="max-width: 200px;">
-                            <h4 class="text-muted fw-bold">Aucun projet trouvé.</h4>
-                            <p class="text-secondary text-center">Nous n'avons trouvé aucune information correspondant à la liste de vos projets.</p>
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" class="btn btn-primary mt-3">Créer un nouveau projet</a>
-                    </div>
-
+                            <img src="assets/themes/data.png"
+                                alt="Aucune donnée trouvée"
+                                class="img-fluid mb-4"
+                                style="max-width: 200px;">
+                                <h4 class="text-muted fw-bold">Aucun projet trouvé.</h4>
+                                <p class="text-secondary text-center">Nous n'avons trouvé aucune information correspondant à la liste de vos projets.</p>
+                                <?php
+                                    if($role == 'etudiant') {
+                                        ?><p class="text-secondary text-center"><b class="text-primary">Veuillez contacter votre directeur.</b></p><?php
+                                    } else {
+                                        ?><a href="#" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" class="btn btn-primary mt-3">Créer un nouveau projet</a><?php
+                                    }
+                                ?>
+                        </div>
                     <?php
                 }
             break;

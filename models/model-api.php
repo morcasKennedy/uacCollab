@@ -130,6 +130,51 @@
             return $result;
         }
 
+        public function log_etudiants($email) {
+            $query = 'SELECT
+                inscription.id AS id,
+                inscription.dates AS date,
+                inscription.description AS description,
+                inscription.etudiant AS etudiant,
+                inscription.promotion AS promotion,
+                inscription.annee AS annee,
+                inscription.status AS status,
+                etudiant.id AS id_etudiant,
+                etudiant.matricule AS matricule,
+                etudiant.nom AS nom,
+                etudiant.postnom AS postnom,
+                etudiant.prenom AS prenom,
+                etudiant.genre AS genre,
+                etudiant.date_naissance AS date_naissance,
+                etudiant.adresse AS adresse,
+                etudiant.image AS image,
+                etudiant.telephone AS telephone,
+                etudiant.email AS email,
+                etudiant.mot_de_passe AS mot_de_passe,
+                etudiant.status AS status_etudiant
+            FROM
+                etudiant, inscription
+            WHERE
+                etudiant.id = inscription.etudiant AND
+                (etudiant.telephone = ? OR etudiant.email = ?) AND
+                etudiant.status = ?
+            ORDER BY
+                inscription.etudiant DESC
+            LIMIT
+                1';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $email,
+                $email,
+                $this->status
+            ]);
+
+            $result = [];
+            while($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+        }
         // Get last annee academique
         public function get_last_year() {
             $query = 'SELECT annee.id as id

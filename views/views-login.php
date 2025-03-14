@@ -1,6 +1,22 @@
 <?php
     $page_title = 'UAC collab | Login';
     ob_start();
+    session_start();
+
+    $url = $_GET['url'] ?? '';
+
+    // Se doconnecter si il cliquer sur le bouton logout
+    if(str_contains($url, 'logout')) {
+      session_destroy();
+      header('location:./login');
+    }
+
+    // Se connecter lors que use a ete connecter pour la premiere fois
+    if(! empty($_SESSION['user']['id'])) {
+      header('location:./');
+      exit;
+    }
+
 ?>
 
 <title><?=$page_title ?></title>
