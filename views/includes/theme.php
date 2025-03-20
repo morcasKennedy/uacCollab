@@ -44,7 +44,7 @@
     ?>
 
     <div class="bs-toast toast fade position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive"
-        aria-atomic="true" id="toast-example">
+        aria-atomic="true" id="toast-example" style="z-index: 100000;">
         <div class="toast-header">
             <i class="bi bi-bell me-2" id="icon"></i>
             <div class="me-auto fw-semibold" id="title"></div>

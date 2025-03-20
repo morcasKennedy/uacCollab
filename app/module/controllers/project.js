@@ -3,6 +3,7 @@ import * as fx from '../functions/functions.js';
 $(document).ready(()=> {
     get_etudiant_by_encadreur();
     get_data();
+    get_conversation();
     // Save or update project btn
     $(document).on('click', '#save', async (e) => {
         e.preventDefault();
@@ -44,6 +45,16 @@ $(document).ready(()=> {
         fx.fill_select(url, data, 'etudiant');
     }
 
+    function get_conversation() {
+        const data = {
+            action: 'get_conversation',
+        };
+        const url = fx.get_controller_url('project');
+        const container = 'conversation';
+        fx.handle_display({
+            data: data, url: url, container: container
+        });
+    }
 
 });
 

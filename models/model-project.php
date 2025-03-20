@@ -86,9 +86,9 @@
                 projet.running AS running,
                 projet.status AS status,
                 etudiant.nom AS nom,
-                etudiant.nom AS postnom,
-                etudiant.nom AS prenom,
-                etudiant.nom AS genre,
+                etudiant.postnom AS postnom,
+                etudiant.prenom AS prenom,
+                etudiant.genre AS genre,
                 etudiant.image AS image,
                 inscription.id AS id_inscription,
                 CONCAT(promotion.description, ' ',  departement.description ) AS promotion,
@@ -105,6 +105,48 @@
             $stmt = $this->db->prepare($query);
             $stmt->execute([
                 $this->status,
+            ]);
+
+            $result = [];
+            while($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+        }
+
+        public function get_by_id($id) {
+            $query = "SELECT
+                projet.id AS id,
+                projet.dates AS date,
+                projet.titre AS titre,
+                projet.description AS description,
+                projet.etudiant AS etudiant,
+                projet.encadreur AS encadreur,
+                projet.backgroud AS backgroud,
+                projet.running AS running,
+                projet.status AS status,
+                etudiant.nom AS nom,
+                etudiant.postnom AS postnom,
+                etudiant.prenom AS prenom,
+                etudiant.genre AS genre,
+                etudiant.image AS image,
+                inscription.id AS id_inscription,
+                CONCAT(promotion.description, ' ',  departement.description ) AS promotion,
+                projet_encadreur.encadreur AS encadreur_id
+            FROM
+                projet, etudiant, inscription, promotion, departement, projet_encadreur
+            WHERE
+                etudiant.id = inscription.etudiant AND
+                inscription.id = projet.etudiant AND
+                promotion.id = inscription.promotion AND
+                departement.id = promotion.departement AND
+                projet_encadreur.projet = projet.id AND
+                projet.status = ? AND
+                projet.id = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $this->status,
+                $id
             ]);
 
             $result = [];

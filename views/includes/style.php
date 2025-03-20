@@ -28,8 +28,8 @@
 }
 
 .floating-btn {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     display: flex;
     position: fixed;
@@ -42,6 +42,8 @@
     justify-content: center;
     font-size: 30px;
     font-weight: bold;
+    z-index: 100000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre ajoutée */
 }
 
 .bg-img {
@@ -72,12 +74,18 @@
     height: 100px;
     margin-top: -50px;
 }
+.date {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
 
+}
 .custom-truncate,
 .one-truncate {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    padding: 0 5px;
 }
 
 .custom-truncate {
@@ -194,7 +202,18 @@ a {
     display: inline-block;
     margin-right: 5px;
 }
-
+.circle {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1890FF;
+    color: #fff;
+    font-weight: 400;
+    padding: 2px;
+    border-radius: 50%;
+}
 @keyframes spin {
     0% {
         transform: rotate(0deg);

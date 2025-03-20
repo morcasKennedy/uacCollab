@@ -25,10 +25,8 @@
     <div class="auth-wrapper v3">
       <div class="auth-form">
         <div class="auth-header">
-          <a href="#">
-          <img src="./assets/themes/logo.png" class="img-collab" alt="logo">
-          <b>UAC collab</b>
-          </a>
+          <a href="./"><img src="./assets/themes/logo.png" class="img-collab" alt="logo">
+          <b>UAC collab</b></a>
         </div>
         <div class="card my-5">
           <div class="card-body">
@@ -43,6 +41,7 @@
               <label class="form-label">Mot de passe <span class="text-danger">*</span></label>
               <input type="password" id="password" class="form-control" placeholder="****">
             </div>
+
             <div class="d-flex mt-1 justify-content-between">
               <div class="form-check">
                 <input autocomplete="off" class="form-check-input input-primary" type="checkbox" id="customCheckc1" >
@@ -52,12 +51,21 @@
             <div class="d-grid mt-4">
               <button type="button" id="login" class="btn btn-primary">Se connecter</button>
             </div>
+
           </div>
         </div>
+        <div class="auth-footer row">
+          <!-- <div class=""> -->
+            <div class="col my-1">
+              <p class="m-0">Copyright © <a href="#"></a></p>
+            </div>
 
+          <!-- </div> -->
+        </div>
       </div>
     </div>
   </div>
+
 
 <script src="./app/module/controllers/users.js" type="module"></script>
 <?php

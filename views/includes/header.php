@@ -40,6 +40,7 @@
         <!-- [Mobile Media Block end] -->
         <div class="ms-auto">
             <ul class="list-unstyled">
+                <!-- conversation list -->
                 <li class="dropdown pc-h-item">
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" aria-expanded="false">
@@ -53,69 +54,14 @@
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-header px-0 text-wrap header-notification-scroll position-relative"
                             style="max-height: calc(100vh - 215px)">
-                            <div class="list-group list-group-flush w-100">
-                                <a class="list-group-item list-group-item-action">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0">
-                                            <img src="./assets/images/user/avatar-2.jpg" alt="user-image"
-                                                class="user-avtar">
-                                        </div>
-                                        <div class="flex-grow-1 ms-1">
-                                            <span class="float-end text-muted">3:00 AM</span>
-                                            <p class="text-body mb-1">It's <b>Cristina danny's</b> birthday today.
-                                            </p>
-                                            <span class="text-muted">2 min ago</span>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="list-group-item list-group-item-action">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0">
-                                            <img src="./assets/images/user/avatar-1.jpg" alt="user-image"
-                                                class="user-avtar">
-                                        </div>
-                                        <div class="flex-grow-1 ms-1">
-                                            <span class="float-end text-muted">6:00 PM</span>
-                                            <p class="text-body mb-1"><b>Aida Burg</b> commented your post.</p>
-                                            <span class="text-muted">5 August</span>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="list-group-item list-group-item-action">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0">
-                                            <img src="./assets/images/user/avatar-3.jpg" alt="user-image"
-                                                class="user-avtar">
-                                        </div>
-                                        <div class="flex-grow-1 ms-1">
-                                            <span class="float-end text-muted">2:45 PM</span>
-                                            <p class="text-body mb-1"><b>There was a failure to your setup.</b></p>
-                                            <span class="text-muted">7 hours ago</span>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="list-group-item list-group-item-action">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0">
-                                            <img src="./assets/images/user/avatar-4.jpg" alt="user-image"
-                                                class="user-avtar">
-                                        </div>
-                                        <div class="flex-grow-1 ms-1">
-                                            <span class="float-end text-muted">9:10 PM</span>
-                                            <p class="text-body mb-1"><b>Cristina Danny </b> invited to join <b>
-                                                    Meeting.</b></p>
-                                            <span class="text-muted">Daily scrum meeting time</span>
-                                        </div>
-                                    </div>
-                                </a>
+                            <div class="list-group list-group-flush w-100" id="conversation">
+
                             </div>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <div class="text-center py-2">
-                            <a href="#!" class="link-primary">View all</a>
                         </div>
                     </div>
                 </li>
+                <!-- conversation list end -->
+                 <!-- User info  -->
                 <li class="dropdown pc-h-item header-user-profile">
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
@@ -133,7 +79,7 @@
                                     <h6 class="mb-1">Stebin Ben</h6>
                                     <span>UI/UX Designer</span>
                                 </div>
-                                <a href="#!" class="pc-head-link bg-transparent"><i
+                                <a onclick="redirect('./login-logout')" class="pc-head-link bg-transparent"><i
                                         class="ti ti-power text-danger"></i></a>
                             </div>
                         </div>
@@ -141,37 +87,15 @@
                         <div class="tab-content" id="mysrpTabContent">
                             <div class="tab-pane fade show active" id="drp-tab-1" role="tabpanel"
                                 aria-labelledby="drp-t1" tabindex="0">
-                                <a href="./login-logout" class="dropdown-item">
+                                <a onclick="redirect('./login-logout')" class="dropdown-item">
                                     <i class="ti ti-power"></i>
                                     <span>Deconnexion</span>
-                                </a>
-                            </div>
-                            <div class="tab-pane fade" id="drp-tab-2" role="tabpanel" aria-labelledby="drp-t2"
-                                tabindex="0">
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ti ti-help"></i>
-                                    <span>Support</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ti ti-user"></i>
-                                    <span>Account Settings</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ti ti-lock"></i>
-                                    <span>Privacy Center</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ti ti-messages"></i>
-                                    <span>Feedback</span>
-                                </a>
-                                <a href="#!" class="dropdown-item">
-                                    <i class="ti ti-list"></i>
-                                    <span>History</span>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </li>
+                <!-- user info end -->
             </ul>
         </div>
     </div>
