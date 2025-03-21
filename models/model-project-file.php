@@ -159,6 +159,18 @@ class Project_file {
         }
         return $result;
     }
+
+    public function get_project_by_directeur($project){
+        $query = "SELECT projet_encadreur.id, projet_encadreur.projet, projet_encadreur.encadreur FROM projet_encadreur WHERE projet_encadreur.projet = ? AND projet_encadreur.status = ? ORDER BY projet_encadreur.id ASC LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$project, $this->status]);
+
+        $result = [];
+        while($row = $stmt->fetch()) {
+            $result[] = $row;
+        }
+        return $result;
+    }
     public function restaure($id) {
         $query = 'UPDATE fichiers_projet SET status = ? WHERE id = ?';
         $stmt = $this->db->prepare($query);

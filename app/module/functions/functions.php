@@ -48,8 +48,6 @@
             return $formatter->format(new DateTime($date));
         }
 
-<<<<<<< HEAD
-=======
         public static function upload_file($inputName, $targetDir = "uploads/", $newFileName = null,  $allowedTypes = ["jpg", "jpeg", "png", "pdf"], $maxSize = 2 * 1024 * 1024) {
             if (empty($_FILES[$inputName]['name'])) {
                 return ["success" => true, 'message' => ''];
@@ -91,7 +89,4 @@
             }
         }
 
-        
-    
->>>>>>> 9fdf5a5 ([NEW]: add comment in project)
     }

@@ -58,6 +58,7 @@ $(document).ready(() => {
             get_data();
             get_version();
             get_project();
+            $('#description').val('');
 
             const id = fx.get_value('version');
             get_title(id);

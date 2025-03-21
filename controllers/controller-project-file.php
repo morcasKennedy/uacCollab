@@ -143,7 +143,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                         <img src="assets/etudiants/1.png" alt="Profil" class="avatar">
                                         <div>
                                             <h5 class="post-author">Utilisateur</h5>
-                                            <small class="post-date"><?= htmlspecialchars($rows->dates) ?></small>
+                                            <small class="post-date"><?= Functions::date_format($rows->dates) . ', ' . substr($rows->dates, 11, 5) ?></small>
                                         </div>
                                     </div>
 
@@ -151,13 +151,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                     <div class="post-content">
                                         <?= nl2br(htmlspecialchars($rows->commentaire)) ?>
                                     </div>
-
-                                    <!-- Actions sur la publication -->
-                                    <div class="post-actions">
-                                        <button class="btn-action">👍 J'aime</button>
-                                        <button class="btn-action">💬 Commenter</button>
-                                    </div>
-
+                                    <hr>
                                     <!-- Zone de commentaires (exemples statiques pour l'instant) -->
                                     <div class="comments-section">
                                         <?php 
@@ -281,12 +275,17 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                 if (!empty($resultsss)) {
                                     foreach ($resultsss as $rowsss) {
                                         ?>
-                                           
-                                            <div class="mb-3">
-                                                <label for="commentaire"><?= $rowsss->commentaire ?></label>
-                                                <p></p>
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="fileModalLabel"><?= $rowsss->commentaire ?></h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                             </div>
-                    
+                                            <div class="modal-body" >
+                                                <div class="mb-3">
+                                                    <p class="text-muted">Ce fichier ne peut être lu ici, prière de le télécharger svp!</p>
+                                                    <a href="./assets/projets/<?=$rowsss->fichier?>" download class="btn btn-primary w-100">Télécharger <i class="bi bi-download mx-2"></i></a>
+                                                    
+                                                </div>
+                                            </div>
                                         <?php
                                     }
                                 } else {
@@ -344,7 +343,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                             <div class="p-3 bg-cover">
                                 <div class="justify-content-between d-flex">
                                     <h3 class="text-white"><?= $data->titre?></h3>
-                                    <span >Version number</span>
+                                    
                                 </div>
                                 <p><b><?= $data->nom . " " . $data->postnom . " " . $data->prenom ?></b></p>
                                 <b><?= $data->promotion ?></b>

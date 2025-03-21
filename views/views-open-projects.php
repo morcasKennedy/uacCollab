@@ -8,13 +8,19 @@
     $project_id = isset($parts[1]) ? $parts[1] : null;
 
     $db = (new Connexion())->get_connexion();
+    session_start();
 
     $project_files = new Project_file($db);
-    $project_files_by_project = $project_files->get_all($project_id);
+    $directeur = $project_files->get_project_by_directeur($project_id);
 
     
     $title = 'Mes projets';
     $page_title = 'UAC collab | ' . $title;
+
+    $role = !empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : null;
+
+    $id_directeur = !empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : null;
+    $btn = "";
     ob_start();
 ?>
 
@@ -33,9 +39,23 @@
                 <div class="card-header py-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <button class="btn btn-primary my-1">Collaborateur</button>
+                            <?php 
+                                if ($role === 'encadreur') {
+                                    $btn = 'Envoyer la correction';
+                                    foreach ($directeur as $dr){
+                                        if ($dr->encadreur == $id_directeur ) {
+                                            ?>
+                                                <button class="btn btn-primary my-1">Collaborateur</button>
+                                            <?php
+                                        }
+                                    }
+                                } else {
+                                    $btn = 'Envoyer le travail';
+                                }
+                            ?>
+                            
                             <button class="btn btn-primary my-1" data-bs-toggle="modal"
-                                data-bs-target="#correctionModal">Correction</button>
+                                data-bs-target="#correctionModal"><?= $btn ?></button>
                             <button class="btn btn-primary my-1"  data-bs-toggle="modal"
                             data-bs-target="#detailModal">Détails</button>
                             <button class="btn btn-primary my-1"  data-bs-toggle="modal"
@@ -52,6 +72,7 @@
                 <div class="card-body">
                     <!-- showing a title of project file -->
                     <h1><span id="title_commentaire"></span></h1>
+                    
                     <div class="modal-body">
                         <div class="mb-3">
                             <textarea class="form-control" id="description" name="description" placeholder="Votre commentaire..." rows="3" required></textarea>
@@ -111,19 +132,19 @@
 </div>
 
 <!-- Telechargement de fichier -->
-<div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="correctionModalLabel" aria-hidden="true">
+<!-- Modal -->
+<div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Le fichier de cette version</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-            <div class="modal-body" id="data_version_commentaire_file">
-                <!-- data of version -->
-            </div>
+        <div class="modal-content"  id="data_version_commentaire_file">
+            
+           
+                <!-- Affichage dynamique si nécessaire -->
+                
+
         </div>
     </div>
 </div>
+
 
 
 <?php
