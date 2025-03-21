@@ -48,4 +48,45 @@
             return $formatter->format(new DateTime($date));
         }
 
+        public static function upload_file($inputName, $targetDir = "uploads/", $newFileName = null,  $allowedTypes = ["jpg", "jpeg", "png", "pdf"], $maxSize = 2 * 1024 * 1024) {
+            if (empty($_FILES[$inputName]['name'])) {
+                return ["success" => true, 'message' => ''];
+            }
+    
+            if (!isset($_FILES[$inputName]) || $_FILES[$inputName]['error'] !== UPLOAD_ERR_OK) {
+                return ["success" => false, "message" => "Aucun fichier ou erreur lors de l'upload."];
+            }
+    
+            $file = $_FILES[$inputName];
+            $fileName = basename($file["name"]);
+            $fileSize = $file["size"];
+            $fileTmpName = $file["tmp_name"];
+            $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    
+            // Si un nouveau nom de fichier est fourni, on l'utilise
+            if ($newFileName) {
+                $fileName = $newFileName . '.' . $fileExt;
+            }
+    
+            $targetFilePath = $targetDir . $fileName;
+    
+            if (! in_array($fileExt, $allowedTypes)) {
+                return ["success" => false, "message" => "Type de fichier non autorisé. Veuillez insérer un fichier au format : " . implode(", ", $allowedTypes) . "."];
+            }
+    
+            if ($fileSize > $maxSize) {
+                return ["success" => false, "message" => "Le fichier est trop volumineux. Limite: " . ($maxSize / 1024 / 1024) . " Mo."];
+            }
+    
+            if (! is_dir($targetDir)) {
+                mkdir($targetDir, 0777, true);
+            }
+    
+            if (move_uploaded_file($fileTmpName, $targetFilePath)) {
+                return ["success" => true, "message" => $fileName];
+            } else {
+                return ["success" => false, "message" => "Erreur lors du déplacement du fichier."];
+            }
+        }
+
     }

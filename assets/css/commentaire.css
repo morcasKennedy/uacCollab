@@ -1,0 +1,38 @@
+.comment-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    width: fit-content; /* Adapte la largeur au contenu */
+    max-width: 80%; /* Pour éviter que ça dépasse */
+}
+
+.comment-bubble {
+    background-color: #f0f2f5; /* Gris clair comme FB */
+    padding: 10px 15px;
+    border-radius: 18px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word; /* Pour couper les mots si trop longs */
+}
+
+.comment-actions {
+    display: flex;
+    flex-wrap: wrap; /* Retour à la ligne si trop long */
+    gap: 10px; /* Espacement entre les actions */
+    margin-top: 5px;
+}
+
+.comment-actions .action {
+    color: #65676b; /* Gris FB */
+    font-size: 13px;
+    cursor: pointer;
+    margin: 0;
+    transition: color 0.3s;
+}
+
+.comment-actions .action:hover {
+    color: #1877f2; /* Bleu FB au hover */
+    text-decoration: underline;
+}

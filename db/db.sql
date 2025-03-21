@@ -122,6 +122,19 @@ CREATE TABLE suivi_message (
     status INT DEFAULT 0 -- 0 = non lu, 1 = lu
 );
 
+CREATE TABLE commentaire (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    dates DATETIME, 
+    contenu TEXT,
+    filtre TEXT,
+    user BIGINT,
+    id_file BIGINT,
+    role TEXT,
+    status INT
+
+)
+
+
 -- DONNEES DE TEST
 INSERT INTO etudiant (matricule, nom, postnom, prenom, genre, date_naissance, lieu_naissance, adresse, image, telephone, email, mot_de_passe, status) VALUES
 ('ETU001', 'Kabongo', 'Mwamba', 'Jean', 'M', '2000-05-15', 'Kinshasa', 'Avenue 1', '1.png', '0999999991', 'JeanKabongo@uaconline.edu.cd', 'pass123', 1),
