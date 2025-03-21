@@ -77,7 +77,33 @@
             return $result;
         }
 
-        // Get encadreur from database
+        // Get encadreur from database by id
+        public  function get_encadreur_id($id) {
+            $query = 'SELECT
+                encadreur.id AS id,
+                encadreur.nom AS nom,
+                encadreur.postnom AS postnom,
+                encadreur.prenom AS prenom,
+                encadreur.telephone AS telephone,
+                encadreur.adresse AS adresse,
+                encadreur.email AS email
+            FROM
+                encadreur
+            WHERE
+                encadreur.id = ?';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $id
+            ]);
+
+            $result = '';
+            while($row = $stmt->fetch()) {
+                $result = $row->nom . ' ' . $row->prenom;
+            }
+            return $result;
+        }
+
+        // Get etudiant from database
         public  function get_etudiant($an, $prom) {
             $query = 'SELECT
                 etudiant.id AS id,
@@ -107,6 +133,34 @@
             }
             return $result;
         }
+
+        // Get etudiant by id
+        public  function get_etudiant_id($id) {
+            $query = 'SELECT
+                etudiant.id AS id,
+                etudiant.nom AS nom,
+                etudiant.postnom AS postnom,
+                etudiant.prenom AS prenom,
+                etudiant.telephone AS telephone,
+                etudiant.adresse AS adresse,
+                etudiant.email AS email
+            FROM
+                etudiant, inscription
+            WHERE
+                inscription.etudiant = etudiant.id AND
+                inscription.id = ?';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $id,
+            ]);
+
+            $result = '';
+            while($row = $stmt->fetch()) {
+                $result = $row->nom . ' ' . $row->prenom;
+            }
+            return $result;
+        }
+
 
         // Log all users
         public function log_users($email) {
@@ -159,7 +213,7 @@
                 (etudiant.telephone = ? OR etudiant.email = ?) AND
                 etudiant.status = ?
             ORDER BY
-                inscription.etudiant DESC
+                inscription.id DESC
             LIMIT
                 1';
             $stmt = $this->db->prepare($query);

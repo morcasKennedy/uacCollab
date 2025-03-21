@@ -21,6 +21,7 @@ $(document).ready(function() {
     get_promotion();
     get_encadreur();
     get_etudiant();
+    get_conversation();
 
     // Save or update affectation btn
     $(document).on('click', '#save', async (e) => {
@@ -128,4 +129,15 @@ $(document).ready(function() {
             fx.show_message('Veuillez compléter les champs marqués par <b class="star">*</b>' + annee, 'info', 10);
         }
     });
+
+    function get_conversation() {
+        const data = {
+            action: 'get_conversation',
+        };
+        const url = fx.get_controller_url('project');
+        const container = 'conversation';
+        fx.handle_display({
+            data: data, url: url, container: container
+        });
+    }
 });

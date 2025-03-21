@@ -31,7 +31,7 @@
                 </li>
 
             </ul>
-            <a href="" class="logout-btn">Deconnexion</a>
+            <a onclick="redirect('./login-logout')" class="logout-btn text-white">Deconnexion</a>
         </div>
     </div>
 </nav>

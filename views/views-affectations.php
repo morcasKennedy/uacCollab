@@ -1,7 +1,4 @@
 <?php
-    require_once 'app/module/functions/functions.php';
-    require_once 'config/config.php';
-    require_once 'models/model-affectation.php';
     $title = 'Affectation des étudiants';
     $page_title = 'UAC collab | ' . $title;
 
@@ -10,10 +7,12 @@
     $annee = isset($parts[1]) ? $parts[1] : null;
     $promotion = isset($parts[2]) ? $parts[2] : null;
 
-    $db = (new Connexion())->get_connexion();
-
-    $aff = new Affectation($db);
-    $res = $aff->get_all($annee, $promotion);
+    session_start();
+    $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
+    if(empty($_SESSION['user']['id']) OR ! isset($_SESSION['user']['id'])) {
+        header('location:./login');
+        exit;
+    }
     ob_start();
 ?>
 

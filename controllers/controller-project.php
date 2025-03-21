@@ -3,6 +3,8 @@
     require_once('../config/config.php');
     require_once '../app/module/functions/functions.php';
     require_once('../models/model-project.php');
+    require_once('../models/model-chat.php');
+    require_once('../models/model-api.php');
 
     $database = new Connexion();
     $db = $database->get_connexion();
@@ -10,6 +12,8 @@
     session_start();
 
     $project = new Project($db);
+    $chat = new Message($db);
+    $API = new Api($db);
 
     if(isset($_POST['action']) && ! empty($_POST['action'])) {
         $action = htmlspecialchars($_POST['action']);
@@ -67,11 +71,12 @@
                         $response['content'] = 'Veuillez compléter les champs marqués par <b class="star">*</b>';
                     }
 
-                    print json_encode($response);
+
                 } catch(Exception $ex) {
                     $response['status'] = 'warning';
                     $response['content'] = 'Exception ' . $ex->getMessage();
                 }
+                print json_encode($response);
             break;
             case 'load':
                 $encadreur_id = ! empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
@@ -101,6 +106,7 @@
                                         </div>
                                         <div class="card-footer p-3">
                                             <a onclick="redirect('./openProjects-<?=$data->id ?>')" class="mx-2 text-primary">Ouvrir</a>
+                                            <a onclick="redirect('./chat-<?=$data->id ?>')" class="mx-2 text-primary">Conversations</a>
                                         </div>
                                     </div>
                                 </div>
@@ -126,6 +132,7 @@
                                         </div>
                                         <div class="card-footer p-3">
                                             <a onclick="redirect('./openProjects-<?=$data->id ?>')" class="mx-2 text-primary">Ouvrir</a>
+                                            <a onclick="redirect('./chat-<?=$data->id ?>')" class="mx-2 text-primary">Conversations</a>
                                         </div>
                                     </div>
                                 </div>
@@ -150,6 +157,120 @@
                                         ?><a href="#" data-bs-toggle="modal" data-bs-target="#exampleModalToggle" class="btn btn-primary mt-3">Créer un nouveau projet</a><?php
                                     }
                                 ?>
+                        </div>
+                    <?php
+                }
+            break;
+            case 'get_conversation':
+                $encadreur_id = ! empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
+                $result = $project->get_all();
+                $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
+                $count = false;
+                if(! empty($result)) {
+                    foreach($result as $data) {
+                        // Filter project for encadreurs
+                        if($data->encadreur_id == $encadreur_id && $role == 'encadreur') {
+                            $count = true;
+                            ?>
+                               <a onclick="redirect('./chat-<?=$data->id ?>')" class="list-group-item list-group-item-action">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <img src="assets/etudiants/<?=$data->image ?>" alt="user-image"
+                                                class="user-avtar">
+                                        </div>
+                                        <?php
+                                            if(! empty($chat->get_last_conversation($data->id))) {
+                                                foreach($chat->get_last_conversation($data->id) as $row) {
+                                                    $auteur = '';
+                                                    if($role == $row->role && $encadreur_id == $row->auteur) {
+                                                        $auteur = 'Vous';
+                                                    } elseif($row->role == 'encadreur') {
+                                                        $auteur = $API->get_encadreur_id($row->auteur);
+                                                    } elseif($row->role == 'etudiant') {
+                                                        $auteur = $API->get_etudiant_id($row->auteur);
+                                                    }
+                                                    ?>
+                                                        <div class="flex-grow-1 ms-1">
+                                                            <span class="float-end text-muted"><?=substr($row->date, 11, 5) ?></span>
+                                                            <p class="text-body mb-1"><b><?=$data->titre ?></b></p>
+                                                            <span class="float-end circle ">6</span>
+                                                            <span class="text-muted"><b><?=$auteur ?>:</b> <?=$row->contenu ?></span>
+                                                        </div>
+                                                    <?php
+                                                }
+                                            } else {
+                                                ?>
+                                                    <div class="flex-grow-1 ms-1">
+                                                        <span class="float-end text-muted"></span>
+                                                        <p class="text-body mb-1"><b><?=$data->titre ?></b></p>
+                                                        <span class="text-muted"><b>Aucun message</b></span>
+                                                    </div>
+                                                <?php
+                                            }
+                                        ?>
+
+                                    </div>
+                                </a>
+                            <?php
+                        }
+
+                        // Filter project for students
+                        if($data->etudiant == $encadreur_id && $role == 'etudiant') {
+                            $count = true;
+                            ?>
+                               <a onclick="redirect('./chat-<?=$data->id ?>')" class="list-group-item list-group-item-action">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <img src="assets/etudiants/<?=$data->image ?>" alt="user-image"
+                                                class="user-avtar">
+                                        </div>
+                                        <?php
+                                            if(! empty($chat->get_last_conversation($data->id))) {
+                                                foreach($chat->get_last_conversation($data->id) as $row) {
+                                                    $auteur = '';
+                                                    if($role == $row->role && $encadreur_id == $row->auteur) {
+                                                        $auteur = 'Vous';
+                                                    } elseif($row->role == 'encadreur') {
+                                                        $auteur = $API->get_encadreur_id($row->auteur);
+                                                    } elseif($row->role == 'etudiant') {
+                                                        $auteur = $API->get_etudiant_id($row->auteur);
+                                                    }
+                                                    ?>
+                                                        <div class="flex-grow-1 ms-1">
+                                                            <span class="float-end text-muted"><?=substr($row->date, 11, 5) ?></span>
+                                                            <p class="text-body mb-1"><b><?=$data->titre ?></b></p>
+                                                            <span class="float-end circle ">6</span>
+                                                            <span class="text-muted"><b><?=$auteur ?>:</b> <?=! empty($row->contenu) ? $row->contenu : 'Un fichier' ?></span>
+                                                        </div>
+                                                    <?php
+                                                }
+                                            } else {
+                                                ?>
+                                                    <div class="flex-grow-1 ms-1">
+                                                        <span class="float-end text-muted"></span>
+                                                        <p class="text-body mb-1"><b><?=$data->titre ?></b></p>
+                                                        <span class="text-muted"><b>Aucun message</b></span>
+                                                    </div>
+                                                <?php
+                                            }
+                                        ?>
+
+                                    </div>
+                                </a>
+                            <?php
+                        }
+                    }
+                }
+                // Verifier si l'utilisateur connecter ne participer pas a un projet alors on va lui demander de creer un projet si possible
+                if(! $count) {
+                    ?>
+                        <div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 30vh;">
+                            <img src="assets/themes/chat.png"
+                                alt="Aucune donnée trouvée"
+                                class="img-fluid"
+                                style="max-width: 70px;">
+                                <h4 class="text-muted fw-bold">Aucun message.</h4>
+                                <p class="text-secondary text-center">Nous n'avons trouvé aucune de vos conversations.</p>
                         </div>
                     <?php
                 }

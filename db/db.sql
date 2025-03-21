@@ -104,6 +104,23 @@ CREATE TABLE fichiers_projet (
     status INT
 );
 
+CREATE TABLE message (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    dates DATETIME DEFAULT NOW(),
+    contenu TEXT,
+    fichier TEXT,
+    projet BIGINT,  -- Référence à un projet
+    auteur BIGINT,  -- L'utilisateur qui a envoyé le message
+    role TEXT
+);
+
+CREATE TABLE suivi_message (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    message BIGINT,
+    auteur BIGINT,  -- L'utilisateur qui reçoit le message
+    role TEXT,
+    status INT DEFAULT 0 -- 0 = non lu, 1 = lu
+);
 
 -- DONNEES DE TEST
 INSERT INTO etudiant (matricule, nom, postnom, prenom, genre, date_naissance, lieu_naissance, adresse, image, telephone, email, mot_de_passe, status) VALUES

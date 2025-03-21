@@ -47,4 +47,5 @@
             // Convertit la date
             return $formatter->format(new DateTime($date));
         }
+
     }
