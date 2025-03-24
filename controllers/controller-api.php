@@ -117,6 +117,8 @@
                                 if($row->mot_de_passe == $password) {
                                     $_SESSION['user']['id'] = $row->id;
                                     $_SESSION['user']['role'] = 'encadreur';
+                                    $_SESSION['user']['name'] = $row->nom . ' ' . $row->prenom;
+                                    $_SESSION['user']['path'] = $row->image;
                                     $response['status'] = 'success';
                                     $response['content'] = 'Connexion reussie';
 
@@ -131,6 +133,8 @@
                                 if($row->mot_de_passe == $password) {
                                     $_SESSION['user']['id'] = $row->id;
                                     $_SESSION['user']['role'] = 'etudiant';
+                                    $_SESSION['user']['name'] = $row->nom . ' ' . $row->prenom;
+                                    $_SESSION['user']['path'] = $row->image;
                                     $response['status'] = 'success';
                                     $response['content'] = 'Connexion reussie';
                                 } else {

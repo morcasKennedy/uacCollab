@@ -74,6 +74,59 @@
             ]);
         }
 
+        // get user of one project
+        public function get_users_project($projet) {
+            $query = 'SELECT
+                projet_encadreur.id AS id,
+                projet_encadreur.projet AS projet,
+                projet_encadreur.encadreur AS encadreur,
+                projet_encadreur.status AS status
+            FROM
+                projet_encadreur
+            WHERE
+                projet_encadreur.status = ? AND
+                projet_encadreur.projet = ?';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $this->status,
+                $projet
+            ]);
+
+            $result = [];
+            while($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+        }
+
+        // get student project
+        public function get_student_project($id) {
+            $query = 'SELECT
+                projet.id AS projet,
+                projet.dates AS date,
+                projet.titre AS titre,
+                projet.description AS description,
+                projet.etudiant AS etudiant,
+                projet.encadreur AS encadreur,
+                projet.backgroud AS backgroud,
+                projet.running AS running,
+                projet.status AS status
+            FROM
+                projet
+            WHERE
+                projet.id = ?';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $id
+            ]);
+
+            $result = [];
+            while($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+        }
+
         public function get_all() {
             $query = "SELECT
                 projet.id AS id,

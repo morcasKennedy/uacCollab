@@ -87,7 +87,22 @@
     overflow: hidden;
     padding: 0 5px;
 }
-
+.notification {
+    background: #3498DB;
+    padding: 4px;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    margin-top: -10px;
+    position: fixed;
+    top: 20px;
+    margin-left: 13px;
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border: 2px solid #fff;
+}
 .custom-truncate {
     -webkit-line-clamp: 2;
 }

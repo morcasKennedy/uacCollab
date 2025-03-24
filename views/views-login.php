@@ -1,4 +1,5 @@
 <?php
+  require_once 'app/module/functions/functions.php';
     $page_title = 'UAC collab | Login';
     ob_start();
     session_start();

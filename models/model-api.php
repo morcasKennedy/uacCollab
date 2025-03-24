@@ -161,7 +161,6 @@
             return $result;
         }
 
-
         // Log all users
         public function log_users($email) {
             $query = 'SELECT *

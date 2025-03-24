@@ -1,4 +1,5 @@
 <?php
+    require_once 'app/module/functions/functions.php';
     $title = 'Affectation des étudiants';
     $page_title = 'UAC collab | ' . $title;
 
