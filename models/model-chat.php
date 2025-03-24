@@ -6,6 +6,8 @@
         private $fichier;
         private $projet;
         private $auteur;
+        private $message_id;
+        private $status = 0;
         private $role;
 
         public function __construct($db) {
@@ -21,6 +23,7 @@
             $this->role = $role;
         }
 
+        // Insert message
         public function insert() {
             $query = 'INSERT INTO message VALUES (?, ?, ?, ?, ?, ?, ?)';
             $stmt = $this->db->prepare($query);
@@ -35,6 +38,7 @@
             ]);
         }
 
+        // Get aull message
         public function get_all($projet) {
             $query = "SELECT
                 message.id AS id,
@@ -60,6 +64,7 @@
             return $result;
         }
 
+        // Get all conversation
         public function get_last_conversation($projet) {
             $query = "SELECT
                 message.id AS id,
@@ -88,4 +93,99 @@
             }
             return $result;
         }
+
+        // Count chat
+        public function count($projet, $auteur, $role) {
+            $query = "SELECT
+                COUNT(*) AS nb
+            FROM
+                suivi_message
+            WHERE
+                project = ? AND
+                status = ? AND
+                auteur = ? AND
+                role = ?;
+            ";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+               $projet,
+               0,
+               $auteur,
+               $role
+            ]);
+
+            $result = 0;
+            while($row = $stmt->fetch()) {
+                $result = $row->nb;
+            }
+            return $result;
+        }
+
+        // Compter les message non lu
+        public function message_read($message_id) {
+            $query = "SELECT
+                COUNT(*) AS nb
+            FROM
+                suivi_message
+            WHERE
+                message = ? AND
+                status = ?
+            ";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+               $message_id,
+               0
+            ]);
+
+            $result = '';
+            while($row = $stmt->fetch()) {
+                $result = $row->nb;
+            }
+            return $result > 0 ? '' : '-all';
+        }
+
+        public function set_status($projet, $auteur, $role) {
+            $query = 'UPDATE
+                suivi_message
+            SET
+                status = ?
+            WHERE
+                project = ? AND
+                auteur = ? AND
+                role = ?
+            ';
+            $stmt = $this->db->prepare($query);
+            return $stmt->execute([
+                1,
+                $projet,
+                $auteur,
+                $role
+            ]);
+        }
+
+
+
+        public function suivi_message($message_id = null, $projet = null, $auteur = null, $role = null) {
+            $this->message_id = $message_id;
+            $this->projet = $projet;
+            $this->auteur = $auteur;
+            $this->role = $role;
+
+        }
+
+        public function insert_suivi() {
+            $query = 'INSERT INTO suivi_message VALUES (?, ?, ?, ?, ?, ?)';
+            $stmt = $this->db->prepare($query);
+            return $stmt->execute([
+                null,
+                $this->message_id,
+                $this->projet,
+                $this->auteur,
+                $this->role,
+                $this->status
+            ]);
+        }
+
+
+
     }

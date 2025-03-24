@@ -42,9 +42,9 @@
             <ul class="list-unstyled">
                 <!-- conversation list -->
                 <li class="dropdown pc-h-item">
-                    <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
+                    <a class=" dropdown-toggle arrow-none text-dark px-2 mx-2"  data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" aria-expanded="false">
-                        <i class="bi bi-messenger"></i>
+                        <i class="bi bi-messenger text-xl" ></i> <small class="notification"><b>10</b></small>
                     </a>
                     <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
                         <div class="dropdown-header d-flex align-items-center justify-content-between">
@@ -52,9 +52,27 @@
                             <a href="#!" class="pc-head-link bg-transparent"><i class="ti ti-x text-danger"></i></a>
                         </div>
                         <div class="dropdown-divider"></div>
-                        <div class="dropdown-header px-0 text-wrap header-notification-scroll position-relative"
+                        <div class="list-group list-group-flush w-100">
+                            <a onclick="redirect('./chat-0')" class="list-group-item list-group-item-action ">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <img src="assets/etudiants/1.png" alt="user-image"
+                                            class="user-avtar">
+                                    </div>
+                                    <div class="flex-grow-1 ms-1">
+                                        <span class="float-end text-muted text-sm">08:00</span>
+                                        <p class="text-body mb-1"><b>Groupe name</b></p>
+                                        <span class="float-end circle  text-sm">4</span>
+                                        <span class="text-muted text-sm"><b>Auteur:</b> Message</span>
+                                    </div>
+
+                                </div>
+                            </a>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-header py-0 px-0 text-wrap header-notification-scroll position-relative"
                             style="max-height: calc(100vh - 215px)">
-                            <div class="list-group list-group-flush w-100" id="conversation">
+                            <div class="list-group list-group-flush w-100 py-0" id="conversation">
 
                             </div>
                         </div>
@@ -66,18 +84,22 @@
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
                         <img src="./assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar">
-                        <span>Stebin Ben</span>
                     </a>
                     <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
                         <div class="dropdown-header">
                             <div class="d-flex mb-1">
                                 <div class="flex-shrink-0">
-                                    <img src="./assets/images/user/avatar-2.jpg" alt="user-image"
-                                        class="user-avtar wid-35">
+                                    <?php
+                                        $path = '';
+                                        $path = $_SESSION['user']['role'] == 'etudiant' ? 'etudiants/' . $_SESSION['user']['path'] : 'encadreur/' . $_SESSION['user']['path'];
+                                        ?><img src="./assets/<?=$path ?>" alt="user-image"
+                                        class="user-avtar wid-35"><?php
+                                    ?>
+
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Stebin Ben</h6>
-                                    <span>UI/UX Designer</span>
+                                    <h6 class="mb-1"><?=$_SESSION['user']['name'] ?></h6>
+                                    <span><?=Functions::first_capital_letter($_SESSION['user']['role']) ?></span>
                                 </div>
                                 <a onclick="redirect('./login-logout')" class="pc-head-link bg-transparent"><i
                                         class="ti ti-power text-danger"></i></a>

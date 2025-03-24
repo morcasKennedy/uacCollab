@@ -15,7 +15,7 @@ class Commentaire {
     }
 
     // Hydrate les propriétés
-    public function setCommentaire($contenu = null, $filtre = null, $user = null, $id_file, $role = null) {
+    public function setCommentaire($contenu = null, $filtre = null, $user = null, $id_file = null, $role = null) {
         $this->contenu = $contenu;
         $this->filtre = $filtre;
         $this->user = $user;
@@ -59,8 +59,8 @@ class Commentaire {
 
     public function get_by_id_file($id) {
         $query = "
-            SELECT 
-                c.*, 
+            SELECT
+                c.*,
                 e.nom AS encadreur_nom,
                 e.prenom AS encadreur_prenom,
                 et.nom AS etudiant_nom,
@@ -68,18 +68,18 @@ class Commentaire {
             FROM commentaire c
             LEFT JOIN encadreur e ON (c.user = e.id AND c.role = 'encadreur')
             LEFT JOIN etudiant et ON (c.user = et.id AND c.role = 'etudiant')
-            WHERE c.id_file = ? 
+            WHERE c.id_file = ?
             AND c.status = ?
             ORDER BY c.id DESC
         ";
-    
+
         $stmt = $this->db->prepare($query);
         $stmt->execute([$id, $this->status]);
-    
+
         $result = [];
         while ($row = $stmt->fetch()) {
-    
-            
+
+
             if ($row->role === 'encadreur') {
                 $row->nom = $row->encadreur_nom;
                 $row->prenom = $row->encadreur_prenom;
@@ -90,14 +90,14 @@ class Commentaire {
                 $row->nom = null;
                 $row->prenom = null;
             }
-    
+
             $result[] = $row;
         }
-    
+
         return $result;
     }
-    
-    
+
+
 
     // Mettre à jour un commentaire
     public function update($id, $contenu, $filtre) {

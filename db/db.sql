@@ -117,6 +117,7 @@ CREATE TABLE message (
 CREATE TABLE suivi_message (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     message BIGINT,
+    project BIGINT,
     auteur BIGINT,  -- L'utilisateur qui reçoit le message
     role TEXT,
     status INT DEFAULT 0 -- 0 = non lu, 1 = lu
@@ -124,7 +125,7 @@ CREATE TABLE suivi_message (
 
 CREATE TABLE commentaire (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    dates DATETIME, 
+    dates DATETIME,
     contenu TEXT,
     filtre TEXT,
     user BIGINT,
@@ -132,7 +133,7 @@ CREATE TABLE commentaire (
     role TEXT,
     status INT
 
-)
+);
 
 
 -- DONNEES DE TEST

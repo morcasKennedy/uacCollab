@@ -81,8 +81,35 @@
                         $file = $res['message'];
                         $chat->Message($message, $file, $id_project, $user_id, $user_role);
                         if($chat->insert()) {
+                            /**
+                             * Apres le message envoyer, on va inserer les suivi de message pour savoir si il y a des gens
+                             * Qui ont lus ou pas
+                             * 1. On recuper d'abord l'etudiant pour l'ajouter dans cette liste
+                             * 2. On recuper les encadreurs aussi
+                             * 3. On inser dans la table qui fait cette suivie
+                             */
+                            $message_id = $db->lastInsertId();
+                            // Get etudiant or encadreur qui participe au projet
+                            $resultat_etud = $project->get_student_project($id_project);
+                            $resultat_enc = $project->get_users_project($id_project);
+                            $id_etud = 0;
+                            $id_encadreur = 0;
+                            foreach($resultat_etud as $data) {
+                                $id_etud = $data->etudiant;
+                                $role_etud = 'etudiant';
+                                $chat->suivi_message($message_id, $id_project, $id_etud, $role_etud);
+                                $chat->insert_suivi();
+                            }
+
+                            foreach($resultat_enc as $data) {
+                                $id_encadreur = $data->encadreur;
+                                $role_enc = 'encadreur';
+                                $chat->suivi_message($message_id, $id_project, $id_encadreur, $role_enc);
+                                $chat->insert_suivi();
+                            }
+
                             $response['status'] = 'success';
-                            $response['content'] = 'Message envoye';
+                            $response['content'] = 'Success';
                         } else {
                             $response['status'] = 'error';
                             $response['content'] = 'Echec d\'envoie, veuillez reesseyer';
@@ -114,6 +141,8 @@
                         $yesterday = date('Y-m-d', strtotime('-1 day')); // Hier
                         $dayBeforeYesterday = date('Y-m-d', strtotime('-2 days')); // Avant-hier
 
+                        $chat->set_status($id_project, $user_id, $user_role);
+
                         foreach($resultat as $data) {
                             $date = substr($data->date, 0, 10);
 
@@ -143,7 +172,7 @@
                                             <div class="content">
                                                 <div><?=$data->contenu ?></div>
                                                 <!-- Affichage de l'heure d'envoi -->
-                                                <div class="message-time"><?=$time ?></div>
+                                                <div class="message-time"><?=$time ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
                                             </div>
                                         </div>
                                     <?php
@@ -166,7 +195,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-outline-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time"><?=$time ?></div>
+                                                        <div class="message-time"><?=$time ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
                                                     </div>
                                                 </div>
                                             <?php
@@ -182,7 +211,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-outline-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time"><?=$time ?></div>
+                                                        <div class="message-time"><?=$time ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
                                                     </div>
                                                 </div>
                                             <?php
@@ -197,7 +226,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-outline-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time"><?=$time ?></div>
+                                                        <div class="message-time"><?=$time ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
                                                     </div>
                                                 </div>
                                             <?php
@@ -212,7 +241,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-outline-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time "><?=$time ?></div>
+                                                        <div class="message-time "><?=$time ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
                                                     </div>
                                                 </div>
                                             <?php

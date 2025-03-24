@@ -1,5 +1,6 @@
 <?php
     $page_title = 'UAC collab | Accueil';
+    require_once 'app/module/functions/functions.php';
     ob_start();
     session_start();
     $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';

@@ -62,6 +62,8 @@ $(document).ready(()=> {
         }
     }
 
+    setInterval(get_conversation, 3000);
+
     function get_conversation() {
         const data = {
             action: 'get_conversation',

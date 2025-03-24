@@ -168,6 +168,7 @@
                 $count = false;
                 if(! empty($result)) {
                     foreach($result as $data) {
+                        $id_project = $data->id;
                         // Filter project for encadreurs
                         if($data->encadreur_id == $encadreur_id && $role == 'encadreur') {
                             $count = true;
@@ -193,7 +194,12 @@
                                                         <div class="flex-grow-1 ms-1">
                                                             <span class="float-end text-muted"><?=substr($row->date, 11, 5) ?></span>
                                                             <p class="text-body mb-1"><b><?=$data->titre ?></b></p>
-                                                            <span class="float-end circle ">6</span>
+                                                            <?php
+                                                                $count_message = $chat->count($id_project, $encadreur_id, $role);
+                                                                if(! empty($count_message)) {
+                                                                    ?><span class="float-end circle "><?=$count_message ?></span><?php
+                                                                }
+                                                            ?>
                                                             <span class="text-muted"><b><?=$auteur ?>:</b> <?=$row->contenu ?></span>
                                                         </div>
                                                     <?php
@@ -239,7 +245,12 @@
                                                         <div class="flex-grow-1 ms-1">
                                                             <span class="float-end text-muted"><?=substr($row->date, 11, 5) ?></span>
                                                             <p class="text-body mb-1"><b><?=$data->titre ?></b></p>
-                                                            <span class="float-end circle ">6</span>
+                                                            <?php
+                                                                $count_message = $chat->count($id_project, $encadreur_id, $role);
+                                                                if(! empty($count_message)) {
+                                                                    ?><span class="float-end circle "><?=$count_message ?></span><?php
+                                                                }
+                                                            ?>
                                                             <span class="text-muted"><b><?=$auteur ?>:</b> <?=! empty($row->contenu) ? $row->contenu : 'Un fichier' ?></span>
                                                         </div>
                                                     <?php
@@ -249,7 +260,7 @@
                                                     <div class="flex-grow-1 ms-1">
                                                         <span class="float-end text-muted"></span>
                                                         <p class="text-body mb-1"><b><?=$data->titre ?></b></p>
-                                                        <span class="text-muted"><b>Aucun message</b></span>
+                                                        <span class="text-muted"><b>Aucun message </b></span>
                                                     </div>
                                                 <?php
                                             }
