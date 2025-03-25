@@ -4,6 +4,9 @@ $(document).ready(()=> {
     get_etudiant_by_encadreur();
     get_data();
     get_conversation();
+    get_conversation_group();
+    get_count_convesation();
+
     // Save or update project btn
     $(document).on('click', '#save', async (e) => {
         e.preventDefault();
@@ -45,7 +48,11 @@ $(document).ready(()=> {
         fx.fill_select(url, data, 'etudiant');
     }
 
-    setInterval(get_conversation, 3000);
+    setInterval(()=> {
+        get_conversation();
+        get_conversation_group();
+        get_count_convesation();
+    }, 3000);
 
     function get_conversation() {
         const data = {
@@ -58,5 +65,26 @@ $(document).ready(()=> {
         });
     }
 
+    function get_count_convesation() {
+        const data = {
+            action: 'get_count_convesation',
+        };
+        const url = fx.get_controller_url('project');
+        const container = 'count_convesation';
+        fx.handle_display({
+            data: data, url: url, container: container
+        });
+    }
+
+    function get_conversation_group() {
+        const data = {
+            action: 'get_conversation_group',
+        };
+        const url = fx.get_controller_url('project');
+        const container = 'conversation-group';
+        fx.handle_display({
+            data: data, url: url, container: container
+        });
+    }
 });
 

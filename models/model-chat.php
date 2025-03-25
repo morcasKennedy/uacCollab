@@ -154,6 +154,32 @@
             return $result;
         }
 
+        // Count coversation
+        public function count_conversation($auteur, $role) {
+            $query = "SELECT
+                    COUNT(*) as nb
+                FROM
+                    suivi_message
+                WHERE
+                    status = ? AND
+                    auteur = ? AND
+                    role = ?
+                GROUP BY
+                    project";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+               0,
+               $auteur,
+               $role
+            ]);
+
+            $result = [];
+            while($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+        }
+
         // Compter les message non lu
         public function message_read($message_id) {
             $query = "SELECT
