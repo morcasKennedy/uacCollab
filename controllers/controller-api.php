@@ -115,6 +115,13 @@
                         if(! empty($result)) {
                             foreach($result as $row) {
                                 if($row->mot_de_passe == $password) {
+                                    $last_year = $API->get_last_year();
+                                    if($API->get_admin($row->id, $last_year)) {
+                                        $_SESSION['user']['sub_role'] = 'Directeur';
+                                    } else {
+                                        $_SESSION['user']['sub_role'] = 'encadreur';
+                                    }
+
                                     $_SESSION['user']['id'] = $row->id;
                                     $_SESSION['user']['role'] = 'encadreur';
                                     $_SESSION['user']['name'] = $row->nom . ' ' . $row->prenom;

@@ -34,11 +34,11 @@
                     }
                 } else {
                     ?>
-                        <img src="https://img.freepik.com/vecteurs-libre/illustration-du-jeune-homme-souriant_1308-174669.jpg"
+                        <img src="./assets/images/groupe.png"
                         alt="User Avatar">
                         <div>
-                            <div class="user-name">No result</div>
-                            <div class="user-status">No result</div>
+                            <div class="user-name">Groupe</div>
+                            <div class="user-status">Actif</div>
                         </div>
                     <?php
                 }
@@ -52,6 +52,24 @@
                     $user_id = ! empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
                     $user_role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
                     $id_project = htmlspecialchars($_POST['id_project']);
+
+                    // On recupere le directeur pour ajouter dans le message lors qu'il s'agit de message de groupe
+                    $directeur = 0;
+                    if($id_project == 0) {
+                        if(! empty($_SESSION['user']['sub_role']) && $_SESSION['user']['sub_role'] == 'Directeur') {
+                            $directeur = $user_id;
+                        } elseif($user_role == 'etudiant' && ! empty($user_role)) {
+                            $sub_id_project = '';
+                            $project->Project(null, null, $user_id);
+                            foreach($project->verify() as $data) {
+                                $sub_id_project = $data->id;
+                            }
+
+                            foreach($API->get_admin_by_project($sub_id_project) as $data) {
+                                $directeur = $data->encadreur;
+                            }
+                        }
+                    }
 
                     $file = 'file' ?? '';
                     $folder = '../assets/medias/';
@@ -79,7 +97,7 @@
                     $res = Functions::upload_file($file, $folder, null, $ext, $size);
                     if($res['success']) {
                         $file = $res['message'];
-                        $chat->Message($message, $file, $id_project, $user_id, $user_role);
+                        $chat->Message($message, $file, $id_project, $user_id, $user_role, $directeur);
                         if($chat->insert()) {
                             /**
                              * Apres le message envoyer, on va inserer les suivi de message pour savoir si il y a des gens
@@ -90,8 +108,17 @@
                              */
                             $message_id = $db->lastInsertId();
                             // Get etudiant or encadreur qui participe au projet
-                            $resultat_etud = $project->get_student_project($id_project);
-                            $resultat_enc = $project->get_users_project($id_project);
+                           if($id_project == 0) {
+                                $id_encadreur = $directeur;
+                                $role_enc = 'encadreur';
+                                $chat->suivi_message($message_id, $id_project, $id_encadreur, $role_enc);
+                                $chat->insert_suivi();
+                                $resultat_etud = $project->get_student_directeur($directeur);
+
+                           } else {
+                                $resultat_etud = $project->get_student_project($id_project);
+                                $resultat_enc = $project->get_users_project($id_project);
+                           }
                             $id_etud = 0;
                             $id_encadreur = 0;
                             foreach($resultat_etud as $data) {
@@ -101,15 +128,17 @@
                                 $chat->insert_suivi();
                             }
 
-                            foreach($resultat_enc as $data) {
-                                $id_encadreur = $data->encadreur;
-                                $role_enc = 'encadreur';
-                                $chat->suivi_message($message_id, $id_project, $id_encadreur, $role_enc);
-                                $chat->insert_suivi();
+                            if($id_project != 0) {
+                                foreach($resultat_enc as $data) {
+                                    $id_encadreur = $data->encadreur;
+                                    $role_enc = 'encadreur';
+                                    $chat->suivi_message($message_id, $id_project, $id_encadreur, $role_enc);
+                                    $chat->insert_suivi();
+                                }
                             }
 
                             $response['status'] = 'success';
-                            $response['content'] = 'Success';
+                            $response['content'] = 'success';
                         } else {
                             $response['status'] = 'error';
                             $response['content'] = 'Echec d\'envoie, veuillez reesseyer';
@@ -133,7 +162,32 @@
                     $user_id = ! empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
                     $user_role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
                     $id_project = htmlspecialchars($_POST['id_project']);
-                    $resultat = $chat->get_all($id_project);
+
+                    // On recupere le directeur pour ajouter dans le message lors qu'il s'agit de message de groupe
+                    $directeur = 0;
+                    if($id_project == 0) {
+                        if(! empty($_SESSION['user']['sub_role']) && $_SESSION['user']['sub_role'] == 'Directeur') {
+                            $directeur = $user_id;
+                        } elseif($user_role == 'etudiant' && ! empty($user_role)) {
+                            $sub_id_project = '';
+                            $project->Project(null, null, $user_id);
+                            foreach($project->verify() as $data) {
+                                $sub_id_project = $data->id;
+                            }
+
+                            foreach($API->get_admin_by_project($sub_id_project) as $data) {
+                                $directeur = $data->encadreur;
+                            }
+                        }
+                    }
+
+                    $resultat = [];
+                    if($id_project == 0 ) {
+                        $resultat = $chat->get_group($id_project, $directeur);
+                    } else {
+                        $resultat = $chat->get_all($id_project);
+                    }
+
                     if(! empty($resultat)) {
                         $lastDate = null; // Variable pour stocker la dernière date affichée
                         $date = '';

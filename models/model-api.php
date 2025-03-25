@@ -183,6 +183,56 @@
             return $result;
         }
 
+        // Get admin for project
+        public function get_admin($encadreur, $last_year) {
+            $query = 'SELECT
+                COUNT(*) AS nb
+            FROM
+                projet_encadreur, projet, inscription
+            WHERE
+                inscription.id = projet.etudiant AND
+                projet.id = projet_encadreur.projet AND
+                projet_encadreur.encadreur = ? AND
+                projet_encadreur.admin = ? AND
+                inscription.annee = ? AND
+                projet_encadreur.status = ?';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $encadreur,
+                $this->status,
+                $last_year,
+                $this->status
+            ]);
+
+            $result = 0;
+            if($row = $stmt->fetch()) {
+                $result = $row->nb;
+            }
+            return $result > 0 ? true : false;
+        }
+
+        public function get_admin_by_project($project) {
+            $query = 'SELECT
+               *
+            FROM
+                projet_encadreur
+            WHERE
+                projet = ? AND
+                admin = ?
+                ';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $project,
+                $this->status
+            ]);
+
+            $result = [];
+            if($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+        }
+
         public function log_etudiants($email) {
             $query = 'SELECT
                 inscription.id AS id,
@@ -228,6 +278,7 @@
             }
             return $result;
         }
+
         // Get last annee academique
         public function get_last_year() {
             $query = 'SELECT annee.id as id
