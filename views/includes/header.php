@@ -47,7 +47,7 @@
                 <li class="dropdown pc-h-item">
                     <a class=" dropdown-toggle arrow-none text-dark px-2 mx-2"  data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" aria-expanded="false">
-                        <i class="bi bi-messenger text-xl" ></i> <small class="notification"><b>10</b></small>
+                        <i class="bi bi-messenger text-xl" ></i> <span id="count_convesation"></span>
                     </a>
                     <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
                         <div class="dropdown-header d-flex align-items-center justify-content-between">
@@ -58,22 +58,8 @@
                             if(! empty($role) && $role != 'encadreur') {
                                 ?>
                                     <div class="dropdown-divider"></div>
-                                    <div class="list-group list-group-flush w-100">
-                                        <a onclick="redirect('./chat-0')" class="list-group-item list-group-item-action ">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0">
-                                                    <img src="./assets/images/groupe.png" alt="user-image"
-                                                        class="user-avtar">
-                                                </div>
-                                                <div class="flex-grow-1 ms-1">
-                                                    <span class="float-end text-muted text-sm">08:00</span>
-                                                    <p class="text-body mb-1"><b>Groupe</b></p>
-                                                    <span class="float-end circle  text-sm">4</span>
-                                                    <span class="text-muted text-sm"><b>Auteur:</b> Message</span>
-                                                </div>
+                                    <div class="list-group list-group-flush w-100" id="conversation-group">
 
-                                            </div>
-                                        </a>
                                     </div>
                                 <?php
                             }
