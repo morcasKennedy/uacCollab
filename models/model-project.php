@@ -63,13 +63,14 @@
             return $result;
         }
 
-        public function create_encadreur($projet, $encadreur) {
-            $query = 'INSERT INTO projet_encadreur VALUES (?, ?, ?, ?)';
+        public function create_encadreur($projet, $encadreur, $admin = null) {
+            $query = 'INSERT INTO projet_encadreur VALUES (?, ?, ?, ?, ?)';
             $stmt = $this->db->prepare($query);
             return $stmt->execute([
                 null,
                 $projet,
                 $encadreur,
+                $admin,
                 $this->status,
             ]);
         }
@@ -115,6 +116,33 @@
                 projet
             WHERE
                 projet.id = ?';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $id
+            ]);
+
+            $result = [];
+            while($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+        }
+
+        public function get_student_directeur($id) {
+            $query = 'SELECT
+                projet.id AS projet,
+                projet.dates AS date,
+                projet.titre AS titre,
+                projet.description AS description,
+                projet.etudiant AS etudiant,
+                projet.encadreur AS encadreur,
+                projet.backgroud AS backgroud,
+                projet.running AS running,
+                projet.status AS status
+            FROM
+                projet
+            WHERE
+                projet.encadreur = ?';
             $stmt = $this->db->prepare($query);
             $stmt->execute([
                 $id

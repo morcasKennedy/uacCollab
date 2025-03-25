@@ -7,6 +7,7 @@
         private $projet;
         private $auteur;
         private $message_id;
+        private $admin;
         private $status = 0;
         private $role;
 
@@ -15,17 +16,18 @@
             $this->date = date('Y-m-d H:i:s');
         }
 
-        public function Message($contenu = null, $fichier = null, $projet = null, $auteur = null, $role = null) {
+        public function Message($contenu = null, $fichier = null, $projet = null, $auteur = null, $role = null, $admin = null) {
             $this->contenu = $contenu;
             $this->fichier = $fichier;
             $this->projet = $projet;
             $this->auteur = $auteur;
+            $this->admin = $admin;
             $this->role = $role;
         }
 
         // Insert message
         public function insert() {
-            $query = 'INSERT INTO message VALUES (?, ?, ?, ?, ?, ?, ?)';
+            $query = 'INSERT INTO message VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             $stmt = $this->db->prepare($query);
             return $stmt->execute([
                 null,
@@ -35,6 +37,7 @@
                 $this->projet,
                 $this->auteur,
                 $this->role,
+                $this->admin,
             ]);
         }
 
@@ -47,7 +50,8 @@
                 message.fichier AS fichier,
                 message.projet AS projet,
                 message.auteur AS auteur,
-                message.role AS role
+                message.role AS role,
+                message.admin AS admin
             FROM
                 message
             WHERE
@@ -55,6 +59,35 @@
             $stmt = $this->db->prepare($query);
             $stmt->execute([
                $projet
+            ]);
+
+            $result = [];
+            while($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+        }
+
+        // get message for group
+        public function get_group($group, $project) {
+            $query = "SELECT
+                message.id AS id,
+                message.dates AS date,
+                message.contenu AS contenu,
+                message.fichier AS fichier,
+                message.projet AS projet,
+                message.auteur AS auteur,
+                message.role AS role,
+                message.admin AS admin
+            FROM
+                message
+            WHERE
+                message.admin = ? AND
+                message.projet = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $project,
+                $group,
             ]);
 
             $result = [];

@@ -89,6 +89,7 @@ CREATE TABLE projet_encadreur (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     projet BIGINT,
     encadreur BIGINT,
+    admin INT,
     status INT
 );
 
@@ -111,6 +112,7 @@ CREATE TABLE message (
     fichier TEXT,
     projet BIGINT,  -- Référence à un projet
     auteur BIGINT,  -- L'utilisateur qui a envoyé le message
+    admin BIGINT,
     role TEXT
 );
 

@@ -59,7 +59,7 @@
                                 $response['content'] = 'Le projet crée avec succès';
 
                                 $project_id = $project->get_last_project();
-                                $project->create_encadreur($project_id, $user_id);
+                                $project->create_encadreur($project_id, $user_id, true);
                             } else {
                                 $response['status'] = 'error';
                                 $response['content'] = 'Erreur lors de l\'enregistrement de projet';
@@ -272,16 +272,17 @@
                         }
                     }
                 }
+                $sub_role = ! empty($_SESSION['user']['sub_role']) ? $_SESSION['user']['sub_role'] : '';
                 // Verifier si l'utilisateur connecter ne participer pas a un projet alors on va lui demander de creer un projet si possible
-                if(! $count) {
+                if(! $count && $sub_role == 'encadreur') {
                     ?>
                         <div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 30vh;">
                             <img src="assets/themes/chat.png"
                                 alt="Aucune donnée trouvée"
                                 class="img-fluid"
                                 style="max-width: 70px;">
-                                <h4 class="text-muted fw-bold">Aucun message.</h4>
-                                <p class="text-secondary text-center">Nous n'avons trouvé aucune de vos conversations.</p>
+                                <h4 class="text-muted fw-bold">Aucune conversation trouvée.</h4>
+                                <p class="text-secondary text-center">Nous n'avons trouvé aucune de vos conversations. <br> <span class="text-primary">Veuillez contacter votre directeur</span></p>
                         </div>
                     <?php
                 }
