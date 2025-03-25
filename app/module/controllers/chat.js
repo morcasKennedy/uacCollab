@@ -13,6 +13,8 @@ $(document).ready(()=> {
 
     get_conversation_header();
     get_conversation();
+    get_conversation_group();
+    get_count_convesation();
     setTimeout(() => {
         get_chat();
     }, 100);
@@ -62,7 +64,7 @@ $(document).ready(()=> {
         }
     }
 
-    setInterval(get_conversation, 3000);
+
 
     function get_conversation() {
         const data = {
@@ -87,6 +89,17 @@ $(document).ready(()=> {
         });
     }
 
+    function get_conversation_group() {
+        const data = {
+            action: 'get_conversation_group',
+        };
+        const url = fx.get_controller_url('project');
+        const container = 'conversation-group';
+        fx.handle_display({
+            data: data, url: url, container: container
+        });
+    }
+
     function get_chat() {
         const data = {
             id_project: id_project,
@@ -106,7 +119,24 @@ $(document).ready(()=> {
         chatBox.scrollTop(chatBox.prop("scrollHeight"));
     }
 
+    function get_count_convesation() {
+        const data = {
+            action: 'get_count_convesation',
+        };
+        const url = fx.get_controller_url('project');
+        const container = 'count_convesation';
+        fx.handle_display({
+            data: data, url: url, container: container
+        });
+    }
+
     setInterval(get_chat, 2000);
+    setInterval(()=>{
+        get_conversation();
+        get_conversation_group();
+        get_count_convesation();
+    }, 3000);
+
     function clear_preview() {
         $('#message').val('');
         $('#fileInput').val('');

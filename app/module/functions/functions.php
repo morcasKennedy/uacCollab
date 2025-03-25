@@ -1,4 +1,9 @@
 <?php
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
+
+    require_once __DIR__ . '/../../../libraries/vendor/autoload.php';
+ // Assurez-vous que PHPMailer est installé via Composer
     class Functions {
         public static function generate_color() {
             $r = rand(0, 150);
@@ -97,5 +102,55 @@
             $str = ucfirst($str);
             return $str;
         }
+
+        public static function send_mail($email_to, $user_name, $subject, $body) {
+            $mail = new PHPMailer(true);
+            try {
+                // Configurer le serveur SMTP
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.gmail.com'; // Remplacez par votre serveur SMTP
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'uaccollab@gmail.com'; // Remplacez par votre e-mail
+                $mail->Password   = 'sypm hwpw kjto ixpf'; // Utilisez un mot de passe d'application si besoin
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = 587;
+
+                // Destinataires
+                $mail->setFrom('uaccollab@gmail.com', 'UAC Collab'); // Expediteur
+                $mail->addAddress($email_to,$user_name);// A qui destinateur
+
+                // Contenu de l'e-mail
+                $mail->isHTML(true);
+                $mail->Subject = $subject;
+                $mail->Body    = $body;
+                $mail->AltBody = strip_tags($body);
+
+                // Envoi du mail
+                return $mail->send() ? true : false;
+            } catch (Exception $e) {
+                return ["success" => false, "message" => "Erreur: " . $mail->ErrorInfo];
+            }
+        }
+
+        public static function local_time($stored_date, $user_timezone = 'UTC') {
+            // Vérifier si le fuseau horaire est valide
+            if (!in_array($user_timezone, timezone_identifiers_list(), true)) {
+                $user_timezone = 'UTC'; // Si invalide, utiliser UTC par défaut
+            }
+
+            try {
+                // Créer un nouvel objet DateTimeImmutable pour chaque appel
+                $date = new DateTimeImmutable($stored_date, new DateTimeZone('UTC'));
+
+                // Changer de fuseau horaire sans affecter d'autres conversions
+                $converted_date = $date->setTimezone(new DateTimeZone($user_timezone));
+
+                // Retourner l'heure locale au format H:i
+                return $converted_date->format('H:i');
+            } catch (Exception $e) {
+                return null; // En cas d'erreur, retourner '00:00' ou null
+            }
+        }
+
 
     }

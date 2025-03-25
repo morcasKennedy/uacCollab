@@ -11,6 +11,10 @@ $(document).ready(() => {
         id_project = parts[1];
     }
 
+    get_conversation_group();
+    get_conversation();
+    get_count_convesation();
+
     // show the correction changement
     //load_corrections();
 
@@ -28,7 +32,7 @@ $(document).ready(() => {
         // get path to controller files
         const url = fx.get_controller_url('project-file');
 
-        // connection my form with controller 
+        // connection my form with controller
         const status = await fx.save(formData, url, 'correctionModal');
         if(status) {
             get_data();
@@ -52,7 +56,7 @@ $(document).ready(() => {
         // get path to controller files
         const url = fx.get_controller_url('project-file');
 
-        // connection my form with controller 
+        // connection my form with controller
         const status = await fx.save(formData, url, 'correctionModal');
         if(status) {
             get_data();
@@ -103,7 +107,28 @@ $(document).ready(() => {
         });
     }
 
-    
+    function get_conversation_group() {
+        const data = {
+            action: 'get_conversation_group',
+        };
+        const url = fx.get_controller_url('project');
+        const container = 'conversation-group';
+        fx.handle_display({
+            data: data, url: url, container: container
+        });
+    }
+
+    function get_conversation() {
+        const data = {
+            action: 'get_conversation',
+        };
+        const url = fx.get_controller_url('project');
+        const container = 'conversation';
+        fx.handle_display({
+            data: data, url: url, container: container
+        });
+    }
+
     //get title of file project
     function get_title(id){
         const data = {
@@ -152,9 +177,20 @@ $(document).ready(() => {
                 id_project: id_project,
                 action: 'get_version'
             };
-    
+
             const url = fx.get_controller_url('project-file');
             fx.fill_select(url, data, 'version');
+        }
+
+        function get_count_convesation() {
+            const data = {
+                action: 'get_count_convesation',
+            };
+            const url = fx.get_controller_url('project');
+            const container = 'count_convesation';
+            fx.handle_display({
+                data: data, url: url, container: container
+            });
         }
 
         $('#version').on('change', function(){
@@ -162,5 +198,10 @@ $(document).ready(() => {
             get_title(id);
         });
 
+        setInterval(()=> {
+            get_conversation();
+            get_conversation_group();
+            get_count_convesation();
+        }, 3000);
 
 });

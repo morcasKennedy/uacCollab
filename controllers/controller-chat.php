@@ -11,6 +11,8 @@
 
     session_start();
 
+    $user_timezone = ! empty($_SESSION['user_timezone']) ? $_SESSION['user_timezone'] : 'UTC';
+
     $project = new Project($db);
     $chat = new Message($db);
     $API = new Api($db);
@@ -89,10 +91,24 @@
                         "xlsx",
                         "mp3",
                         "m4a",
-                        "wav"
+                        "wav",
+                        'apk'
                     ];
 
-                    $size = 5 * 1024 * 1024; // 5 Mo
+                    $size = 50 * 1024 * 1024; // 5 Mo
+
+
+                    // if(! empty($chat->get_message_no_repondu($id_project, $directeur))) {
+                    //     $response['status'] = 'info';
+                    //     $response['content'] = 'exist directeur: ' . $directeur . ' project: ' . $id_project;
+                    //     print json_encode($response);
+                    //     exit;
+                    // } else {
+                    //     $response['status'] = 'info';
+                    //     $response['content'] = 'n\'existe pas directeur: ' . $directeur . ' project: ' . $id_project;
+                    //     print json_encode($response);
+                    //     exit;
+                    // }
 
                     $res = Functions::upload_file($file, $folder, null, $ext, $size);
                     if($res['success']) {
@@ -212,11 +228,12 @@
                                 $dateAffichee = Functions::date_format($date, 4); // Afficher la date normalement
                             }
 
-                            $time = substr($data->date, 11, 5);
+                            $time = $data->date;
 
                             echo "<div class='date'><strong>{$dateAffichee}</strong></div>";
                             $lastDate = $date; // Mettre à jour la dernière date affichée
                         }
+                        $time = $data->date;
                             // Si c'est le message que j'ai envoyer
                             if($data->auteur == $user_id && $data->role == $user_role) {
                                 // On verifie si il y a aucun fichier
@@ -226,7 +243,7 @@
                                             <div class="content">
                                                 <div><?=$data->contenu ?></div>
                                                 <!-- Affichage de l'heure d'envoi -->
-                                                <div class="message-time"><?=$time ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
+                                                <div class="message-time"><?=Functions::local_time($time, $user_timezone) ?><i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
                                             </div>
                                         </div>
                                     <?php
@@ -249,7 +266,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-outline-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time"><?=$time ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
+                                                        <div class="message-time"><?=Functions::local_time($time, $user_timezone) ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
                                                     </div>
                                                 </div>
                                             <?php
@@ -265,7 +282,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-outline-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time"><?=$time ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
+                                                        <div class="message-time"><?=Functions::local_time($time, $user_timezone) ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
                                                     </div>
                                                 </div>
                                             <?php
@@ -280,7 +297,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-outline-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time"><?=$time ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
+                                                        <div class="message-time"><?=Functions::local_time($time, $user_timezone) ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
                                                     </div>
                                                 </div>
                                             <?php
@@ -295,7 +312,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-outline-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time "><?=$time ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
+                                                        <div class="message-time "><?=Functions::local_time($time, $user_timezone) ?> <i class="bi bi-check2<?=$chat->message_read($data->id) ?>"></i></div>
                                                     </div>
                                                 </div>
                                             <?php
@@ -322,7 +339,7 @@
                                             <div class="user-name user-desc"><?=$auteur ?></div>
                                                 <div><?=$data->contenu ?></div>
                                                 <!-- Affichage de l'heure d'envoi -->
-                                                <div class="message-time text-muted"><?=$time ?></div>
+                                                <div class="message-time text-muted"><?=Functions::local_time($time, $user_timezone) ?></div>
                                             </div>
                                         </div>
                                     <?php
@@ -346,7 +363,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time text-muted"><?=$time ?></div>
+                                                        <div class="message-time text-muted"><?=Functions::local_time($time, $user_timezone) ?></div>
                                                     </div>
                                                 </div>
                                             <?php
@@ -362,7 +379,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time text-muted"><?=$time ?></div>
+                                                        <div class="message-time text-muted"><?=Functions::local_time($time, $user_timezone) ?></div>
                                                     </div>
                                                 </div>
                                             <?php
@@ -377,7 +394,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time text-muted"><?=$time ?></div>
+                                                        <div class="message-time text-muted"><?=Functions::local_time($time, $user_timezone) ?></div>
                                                     </div>
                                                 </div>
                                             <?php
@@ -395,7 +412,7 @@
                                                             <a href="assets/medias/<?=$data->fichier ?>" download="" class=" btn btn-sm btn-light my-2 mx-1">Télécharger <i class="bi bi-download mx-1"></i></a>
                                                             <div class="mt-2"><?=$data->contenu ?></div>
                                                         </div>
-                                                        <div class="message-time text-muted"><?=$time ?></div>
+                                                        <div class="message-time text-muted"><?=Functions::local_time($time, $user_timezone) ?></div>
                                                     </div>
                                                 </div>
                                             <?php

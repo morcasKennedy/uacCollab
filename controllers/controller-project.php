@@ -11,6 +11,8 @@
 
     session_start();
 
+    $user_timezone = ! empty($_SESSION['user_timezone']) ? $_SESSION['user_timezone'] : 'UTC';
+
     $project = new Project($db);
     $chat = new Message($db);
     $API = new Api($db);
@@ -192,7 +194,7 @@
                                                     }
                                                     ?>
                                                         <div class="flex-grow-1 ms-1">
-                                                            <span class="float-end text-muted"><?=substr($row->date, 11, 5) ?></span>
+                                                            <span class="float-end text-muted"><?=Functions::local_time($row->date, $user_timezone) ?></span>
                                                             <p class="text-body mb-1"><b><?=$data->titre ?></b></p>
                                                             <?php
                                                                 $count_message = $chat->count($id_project, $encadreur_id, $role);
@@ -200,7 +202,7 @@
                                                                     ?><span class="float-end circle "><?=$count_message ?></span><?php
                                                                 }
                                                             ?>
-                                                            <span class="text-muted"><b><?=$auteur ?>:</b> <?=$row->contenu ?></span>
+                                                            <span class="text-muted"><b><?=$auteur ?>:</b> <?=! empty($row->fichier) ? '<i class="bi bi-paperclip"></i> fichier' : $row->contenu ?></span>
                                                         </div>
                                                     <?php
                                                 }
@@ -243,7 +245,7 @@
                                                     }
                                                     ?>
                                                         <div class="flex-grow-1 ms-1">
-                                                            <span class="float-end text-muted"><?=substr($row->date, 11, 5) ?></span>
+                                                            <span class="float-end text-muted"><?=Functions::local_time($row->date, $user_timezone) ?></span>
                                                             <p class="text-body mb-1"><b><?=$data->titre ?></b></p>
                                                             <?php
                                                                 $count_message = $chat->count($id_project, $encadreur_id, $role);
@@ -251,7 +253,7 @@
                                                                     ?><span class="float-end circle "><?=$count_message ?></span><?php
                                                                 }
                                                             ?>
-                                                            <span class="text-muted"><b><?=$auteur ?>:</b> <?=! empty($row->contenu) ? $row->contenu : 'Un fichier' ?></span>
+                                                            <span class="text-muted"><b><?=$auteur ?>:</b> <?=! empty($row->fichier) ? '<i class="bi bi-paperclip"></i> fichier' : $row->contenu ?></span>
                                                         </div>
                                                     <?php
                                                 }
@@ -287,5 +289,72 @@
                     <?php
                 }
             break;
+
+            case 'get_conversation_group':
+                $encadreur_id = ! empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
+                $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
+
+                ?>
+                    <a onclick="redirect('./chat-0')" class="list-group-item list-group-item-action ">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <img src="./assets/images/groupe.png" alt="user-image"
+                                    class="user-avtar">
+                            </div>
+                            <?php
+                                if(! empty($chat->get_last_conversation(0))) {
+                                    foreach($chat->get_last_conversation(0) as $row) {
+                                        $auteur = '';
+                                        if($role == $row->role && $encadreur_id == $row->auteur) {
+                                            $auteur = 'Vous';
+                                        } elseif($row->role == 'encadreur') {
+                                            $auteur = $API->get_encadreur_id($row->auteur);
+                                        } elseif($row->role == 'etudiant') {
+                                            $auteur = $API->get_etudiant_id($row->auteur);
+                                        }
+                                        ?>
+                                            <div class="flex-grow-1 ms-1">
+                                                <span class="float-end text-muted"><?=Functions::local_time($row->date, $user_timezone) ?></span>
+                                                <p class="text-body mb-1"><b>Groupe</b></p>
+                                                <?php
+                                                    $count_message = $chat->count(0, $encadreur_id, $role);
+                                                    if(! empty($count_message)) {
+                                                        ?><span class="float-end circle "><?=$count_message ?></span><?php
+                                                    }
+                                                ?>
+                                                <span class="text-muted"><b><?=$auteur ?>:</b> <?=! empty($row->fichier) ? '<i class="bi bi-paperclip"></i> fichier' : $row->contenu ?></span>
+                                            </div>
+                                        <?php
+                                    }
+                                } else {
+                                    ?>
+                                        <div class="flex-grow-1 ms-1">
+                                            <span class="float-end text-muted text-sm"></span>
+                                            <p class="text-body mb-1"><b>Groupe</b></p>
+                                            <span class="text-muted text-sm">Aucun message</span>
+                                        </div>
+                                    <?php
+                                }
+                            ?>
+
+
+                        </div>
+                    </a>
+                <?php
+            break;
+            case 'get_count_convesation':
+                $auteur = ! empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
+                $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
+                $result = $chat->count_conversation($auteur, $role);
+
+                $is_not = 0;
+                foreach($result as $data) {
+                    $is_not += 1;
+                }
+                if(! empty($is_not) && $is_not > 0){
+                    ?><small class="notification"><b><?=$is_not ?></b></small><?php
+                }
+            break;
         }
+
     }

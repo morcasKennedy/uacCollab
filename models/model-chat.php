@@ -1,5 +1,6 @@
 <?php
     class Message{
+
         private $date;
         private $db;
         private $contenu;
@@ -154,6 +155,32 @@
             return $result;
         }
 
+        // Count coversation
+        public function count_conversation($auteur, $role) {
+            $query = "SELECT
+                    COUNT(*) as nb
+                FROM
+                    suivi_message
+                WHERE
+                    status = ? AND
+                    auteur = ? AND
+                    role = ?
+                GROUP BY
+                    project";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+               0,
+               $auteur,
+               $role
+            ]);
+
+            $result = [];
+            while($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+        }
+
         // Compter les message non lu
         public function message_read($message_id) {
             $query = "SELECT
@@ -196,7 +223,30 @@
             ]);
         }
 
+        // Get message not repondu
+        public function get_message_no_repondu($project, $admin) {
+            $query = 'SELECT *
+            FROM
+                message
+            WHERE
+                projet = ? AND
+                dates <= NOW() - INTERVAL 2 HOUR AND
+                admin = ?
+            ORDER BY
+                dates DESC
+                LIMIT 1';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+              $project,
+              $admin
+            ]);
 
+            $result = [];
+            while($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+        }
 
         public function suivi_message($message_id = null, $projet = null, $auteur = null, $role = null) {
             $this->message_id = $message_id;
