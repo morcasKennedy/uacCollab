@@ -86,16 +86,46 @@ class Project_file {
             return $result + 1;
     }
 
-    public function get_title($project, $version): array{
-        $query = "SELECT * FROM fichiers_projet WHERE projet = ? AND version = ? AND status = ? ORDER BY version DESC";
+    public function get_title($project, $version): array {
+        $query = "
+            SELECT 
+                fp.*, 
+                e.nom AS etudiant_nom,
+                e.prenom AS etudiant_prenom,
+                en.nom AS encadreur_nom,
+                en.prenom AS encadreur_prenom
+            FROM fichiers_projet fp
+            LEFT JOIN etudiant e ON (fp.user = e.id AND fp.type = 'correction')
+            LEFT JOIN encadreur en ON (fp.user = en.id AND fp.type = 'soumission')
+            WHERE fp.projet = ?
+            AND fp.version = ?
+            AND fp.status = ?
+            ORDER BY fp.version DESC
+        ";
+    
         $stmt = $this->db->prepare($query);
         $stmt->execute([$project, $version, $this->status]);
+    
         $result = [];
-            while($row = $stmt->fetch()) {
-                $result[] = $row;
+        while ($row = $stmt->fetch(PDO::FETCH_OBJ)) {
+    
+            if ($row->type === 'correction') {
+                $row->nom = $row->etudiant_nom;
+                $row->prenom = $row->etudiant_prenom;
+            } else if ($row->type === 'soumission') {
+                $row->nom = $row->encadreur_nom;
+                $row->prenom = $row->encadreur_prenom;
+            } else {
+                $row->nom = null;
+                $row->prenom = null;
             }
-            return $result;
+    
+            $result[] = $row;
+        }
+    
+        return $result;
     }
+    
 
     public function get_data_version($project, $version): array{
         $query = "SELECT * FROM fichiers_projet WHERE projet = ? AND version = ? AND status = ? ORDER BY version DESC";

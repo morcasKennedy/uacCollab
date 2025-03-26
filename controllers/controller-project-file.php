@@ -142,7 +142,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                     <div class="post-header">
                                         <img src="assets/etudiants/1.png" alt="Profil" class="avatar">
                                         <div>
-                                            <h5 class="post-author">Utilisateur</h5>
+                                            <h5 class="post-author"><?= $rows->nom . " " . $rows->prenom ?></h5>
                                             <small class="post-date"><?= Functions::date_format($rows->dates) . ', ' . substr($rows->dates, 11, 5) ?></small>
                                         </div>
                                     </div>

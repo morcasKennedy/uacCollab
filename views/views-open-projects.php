@@ -2,6 +2,7 @@
     require_once 'app/module/functions/functions.php';
     require_once 'config/config.php';
     require_once 'models/model-project-file.php';
+    require_once 'models/model-commentaire.php';
 
     // Get params
     $parts = explode('-', $_GET['url']);
@@ -11,7 +12,10 @@
     session_start();
 
     $project_files = new Project_file($db);
+    $commentaire_data = new Commentaire($db);
     $directeur = $project_files->get_project_by_directeur($project_id);
+    $comment_project = $project_files->get_all($project_id);
+    
 
     
     $title = 'Mes projets';
@@ -45,7 +49,8 @@
                                     foreach ($directeur as $dr){
                                         if ($dr->encadreur == $id_directeur ) {
                                             ?>
-                                                <button class="btn btn-primary my-1">Collaborateur</button>
+                                                <button class="btn btn-primary my-1 " data-bs-toggle="modal"
+                                                data-bs-target="#encadreurModal">Collaborateur</button>
                                             <?php
                                         }
                                     }
@@ -72,15 +77,24 @@
                 <div class="card-body">
                     <!-- showing a title of project file -->
                     <h1><span id="title_commentaire"></span></h1>
+                    <?php 
+                        if (! empty($comment_project)){
+                            ?>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="description" name="description" placeholder="Votre commentaire..." rows="3" required></textarea>
+                                </div>
+
+
+                                <button type="button" id="save_commentaire" class="btn btn-primary">Envoyer</button>
+                            </div>
+                            <?php
+                        }else{
+                            ?>
+                            <?php
+                        }
+                    ?>
                     
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <textarea class="form-control" id="description" name="description" placeholder="Votre commentaire..." rows="3" required></textarea>
-                        </div>
-
-
-                        <button type="button" id="save_commentaire" class="btn btn-primary">Envoyer</button>
-                    </div>
 
 
                 </div>
@@ -108,6 +122,28 @@
                 <div class="mb-3">
                     <label for="fichier">Fichier de correction</label>
                     <input class="form-control" type="file" id="fichier" required>
+                </div>
+
+                <button id="save" class="btn btn-primary">Envoyer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de correction -->
+<div class="modal fade" id="encadreurModal" tabindex="-1" aria-labelledby="correctionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ajouter l'encadreur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <div class="my-3">
+                    <label for="">Sélectionnez l'enseignant</label>
+                    <select id="enseignant" class="form-select mt-2">
+                        <option value="">Jackson Kennedy</option>
+                    </select>
                 </div>
 
                 <button id="save" class="btn btn-primary">Envoyer</button>
