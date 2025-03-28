@@ -14,9 +14,9 @@ $(document).ready(() => {
     get_conversation_group();
     get_conversation();
     get_count_convesation();
-
-    // show the correction changement
-    //load_corrections();
+    get_version();
+    get_data();
+    get_project();
 
     // handller for to save or update data
     $(document).on('click', '#save', async (e) => {
@@ -44,12 +44,37 @@ $(document).ready(() => {
         }
     });
 
+    $(document).on('click', '.like', async function(e) {
+        e.preventDefault();
+    
+        let commentId = $(this).data("id"); // Utilise $(this) pour récupérer l'ID
+        const formData = {
+            commentId: commentId,
+           
+            action: 'save_like'
+        }
+
+        // get path to controller files
+        const url = fx.get_controller_url('project-file');
+
+        // connection my form with controller
+        const status = await fx.send(formData, url, 'correctionModal');
+        if(status) {
+
+            const id = fx.get_value('version');
+            get_title(id);
+            get_comment(id);
+        }
+    });
+    
+
     // save or update comment
     $(document).on('click', '#save_commentaire', async (e) => {
         e.preventDefault();
 
         const formData = {
             description: fx.get_value('description'),
+            version: fx.get_value('version'),
             action: 'save_commentaire'
         }
 
@@ -57,7 +82,7 @@ $(document).ready(() => {
         const url = fx.get_controller_url('project-file');
 
         // connection my form with controller
-        const status = await fx.save(formData, url, 'correctionModal');
+        const status = await fx.send(formData, url, 'correctionModal');
         if(status) {
             get_data();
             get_version();
@@ -71,15 +96,9 @@ $(document).ready(() => {
         }
     });
 
-    get_data();
-    get_project();
-    setInterval(()=>{
-        const id = fx.get_value('version');
-        get_title(id);
-        get_data_version(id);
-        get_data_version_file(id);
-    }, 100);
-    get_version();
+    
+    
+    
 
     // get all project file by project
     function get_data() {
@@ -137,7 +156,20 @@ $(document).ready(() => {
             action: 'get_title',
         };
         const url = fx.get_controller_url('project-file');
-        const container = 'title_commentaire';
+        const container = 'get_title_comment';
+        fx.handle_display({
+            data: data, url: url, container: container
+        });
+    }
+
+    function get_comment(id){
+        const data = {
+            id_project: id_project,
+            version: id,
+            action: 'get_comment',
+        };
+        const url = fx.get_controller_url('project-file');
+        const container = 'get_comment';
         fx.handle_display({
             data: data, url: url, container: container
         });
@@ -196,12 +228,22 @@ $(document).ready(() => {
         $('#version').on('change', function(){
             let id = $(this).val();
             get_title(id);
+            get_comment(id);
         });
 
+        setTimeout(()=>{
+            const id = fx.get_value('version');
+            get_title(id);
+            get_data_version(id);
+            get_data_version_file(id);
+        }, 100);
+
         setInterval(()=> {
+            const id = fx.get_value('version');
             get_conversation();
             get_conversation_group();
             get_count_convesation();
+            get_comment(id);
         }, 3000);
 
 });

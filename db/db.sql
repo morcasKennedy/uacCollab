@@ -137,6 +137,14 @@ CREATE TABLE commentaire (
 
 );
 
+CREATE TABLE likes (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    likes INT,
+    user BIGINT, 
+    commentaire BIGINT, 
+    role TEXT
+);
+
 
 -- DONNEES DE TEST
 INSERT INTO etudiant (matricule, nom, postnom, prenom, genre, date_naissance, lieu_naissance, adresse, image, telephone, email, mot_de_passe, status) VALUES

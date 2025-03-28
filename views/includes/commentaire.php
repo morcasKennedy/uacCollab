@@ -14,6 +14,10 @@
     margin-bottom: 10px;
 }
 
+.love{
+    margin-top: -5px;
+    margin-right: 5px;
+}
 .avatar {
     width: 45px;
     height: 45px;
