@@ -32,29 +32,38 @@
     <link rel="stylesheet" href="assets/css/style.css" id="main-style-link">
     <link rel="stylesheet" href="assets/css/style-preset.css">
 </head>
+<style>
+    .maintenance-block {
 
+        height: 100vh;
+        background-size: cover;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+    }
+    .card-body {
+        background-image: linear-gradient(rgba(0, 0,0, 0.3), rgba(0, 0, 0, 0.3)), url(assets/themes/Error500.png);
+        height: 100%;
+        border-radius: 8px;
+        background-size: cover;
+    }
+</style>
 
 <body>
-    <!-- [ Pre-loader ] start -->
-    <div class="loader-bg">
-        <div class="loader-track">
-            <div class="loader-fill"></div>
-        </div>
-    </div>
     <div class="maintenance-block">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="error-card">
-                        <div class="card-body">
-                            <div class="error-image-block">
-                                <img class="img-fluid" src="assets/themes/Error500.png" alt="img">
-                                <img class="img-fluid img-twocone" src="assets/themes/TwoCone.png" alt="img">
-                            </div>
+        <div class="container ">
+            <div class="row justify-content-center">
+                <div class="col-xl-10 col-lg-10 col-md-10">
+                    <div class="card">
+                        <div class="card-body py-5">
                             <div class="text-center">
-                                <h1 class="mt-5"><b>Échec de la connexion</b></h1>
-                                <p class="mt-2 mb-4 text-muted">Cette erreur indique que l'application n'a pas pu établir une connexion avec la base de données, ce qui empêche l'accès aux informations stockées. Cela peut être dû à des problèmes de configuration, des identifiants incorrects ou une indisponibilité temporaire du serveur.</p>
-                                <button onclick="location.reload()" type="button" class="btn btn-primary mb-3">Ressayer</button>
+                                <p>
+                                    <img style="width: 60px;" src="assets/themes/logo.png" alt="img"><br>
+                                    <span>Uaccolab</span>
+                                </p>
+                                <h1 class="mt-5 text-white"><b>Échec de la connexion</b></h1>
+                                <p class="mt-2 mb-4 text-white">Cette erreur indique que l'application n'a pas pu établir une connexion avec la base de données, ce qui empêche l'accès aux informations stockées. Cela peut être dû à des problèmes de configuration, des identifiants incorrects ou une indisponibilité temporaire du serveur.</p>
+                                <button onclick="location.reload()" type="button" class="btn btn-primary btn-lg w-50 mb-3">Réessayer</button>
                             </div>
                         </div>
                     </div>

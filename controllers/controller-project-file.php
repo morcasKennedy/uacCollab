@@ -37,42 +37,48 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                 $path = '../assets/projets/';
                 $extension = ['doc', 'docx'];
 
-                $version = $project_file->get_version_by_project($projet_id);
+                if (! empty($commentaire && $name_file)){
 
-                $project_file->Project_files($projet_id,$name_file, $user_id,$commentaire, $type, $version);
+                    $version = $project_file->get_version_by_project($projet_id);
 
+                    $project_file->Project_files($projet_id,$name_file, $user_id,$commentaire, $type, $version);
 
-                if ($project_file->create()){
-                    $last_id = $db->lastInsertId();
+                    if ($project_file->create()){
+                        $last_id = $db->lastInsertId();
 
-                    $result = Functions::upload_file($name_file, $path, $last_id, $extension);
+                        $result = Functions::upload_file($name_file, $path, $last_id, $extension);
 
-                    $insertStatus = false;
+                        $insertStatus = false;
 
-                    if ($result['success']){
-                        $insertStatus = true;
-                    }else{
-                        $response['status'] = 'info';
-                        $response['content'] = $result['message'];
-                    }
+                        if ($result['success']){
+                            $insertStatus = true;
+                        }else{
+                            $response['status'] = 'info';
+                            $response['content'] = $result['message'];
+                        }
 
-                    if ($insertStatus){
-                        if ($project_file->update_file($result['message'],$last_id)){
-                            $response['status'] = 'success';
-                            $response['content'] = 'enregistrement réussi avec succès';
+                        if ($result['success']){
+                            if ($project_file->update_file($result['message'],$last_id)){
+                                $response['status'] = 'success';
+                                $response['content'] = 'enregistrement réussi avec succès';
+                            }else{
+                                $response['status'] = 'error';
+                                $response['content'] = 'echec d\'envoi du fichier';
+                            }
+
                         }else{
                             $response['status'] = 'error';
-                            $response['content'] = 'echec d\'envoi du fichier';
+                            $response['content'] = $result['message'];
                         }
 
                     }else{
                         $response['status'] = 'error';
-                        $response['content'] = 'echec d\'envoi du fichier';
+                        $response['content'] = 'Erreur lors de l\'enregistrement en base.';
                     }
 
                 }else{
-                    $response['status'] = 'error';
-                        $response['content'] = 'Erreur lors de l\'enregistrement en base.';
+                    $response['status'] = 'info';
+                    $response['content'] = 'Comptétez les champs obligatoires.';
                 }
 
 
@@ -134,9 +140,9 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 
                         if (!empty($results)) {
                             foreach ($results as $rows) {
-    
-                               
-                                ?>          
+
+
+                                ?>
 
                                     <!-- Photo de profil + nom + date -->
                                     <div class="post-header">
@@ -184,7 +190,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                     try {
                         ?>
                             <div class="comments-section">
-                                <?php 
+                                <?php
                                 $version = htmlspecialchars($_POST['version']);
                                  $comment_list = $commentaire_data->get_comment_by_version($version);
                                     foreach ($comment_list as $liste){
@@ -203,14 +209,14 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                                     <p><?= $liste->contenu ?></p>
                                                     <div class="comment-actions">
                                                         <span class="like" data-id="<?=$liste->id ?>"><i class="bi bi-heart<?=$commentaire_data->toggle_like($user_id, $liste->id, $user_role)?> text-danger"></i> J'aime <small class="love"><?=$commentaire_data->count_like($liste->id)?></small> </span>
-                                                        <span>Répondre</span> 
+                                                        <span>Répondre</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         <?php
                                     }
                                 ?>
-                                
+
                             </div>
                         <?php
                     } catch (\Throwable $th) {
@@ -351,8 +357,13 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
             case 'title_project_student':
                 $id_project = htmlspecialchars($_POST['id_project']);
                 $result = $project_file->get_project_by_id($id_project);
+                $limit = 0;
                 if(! empty($result)) {
                     foreach($result as $data) {
+                        $limit ++;
+                        if($limit > 1) {
+                            continue;
+                        }
                         ?>
                             <div class="p-3 bg-cover">
                                 <div class="justify-content-between d-flex">
@@ -391,17 +402,24 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                 try {
                     $description = htmlspecialchars($_POST['description']);
                     $id_file = htmlspecialchars($_POST['version']);
-                    
+
                     $filtre = 0;
 
-                    $commentaire_data->setCommentaire($description,$filtre, $user_id,$id_file, $user_role);
-    
-                    if ($commentaire_data->create()){
-                        $response['status'] = 'success';
-                        $response['content'] = 'enregistrement réussi avec succès';
+                    if (! empty($description && $id_file)){
+
+                        $commentaire_data->setCommentaire($description,$filtre, $user_id,$id_file, $user_role);
+
+                        if ($commentaire_data->create()){
+                            $response['status'] = 'success';
+                            $response['content'] = 'enregistrement réussi avec succès';
+                        }else{
+                            $response['status'] = 'error';
+                            $response['content'] = 'echec d\'enregistrement';
+                        }
+
                     }else{
-                        $response['status'] = 'error';
-                        $response['content'] = 'echec d\'enregistrement';
+                        $response['status'] = 'info';
+                        $response['content'] = 'Compléter le commentaire svp!';
                     }
 
                     echo json_encode($response);
@@ -416,7 +434,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                 case 'save_like':
                     header('Content-Type: application/json');
                     $response = [];
-                    
+
                     try {
                         $commentId = htmlspecialchars($_POST['commentId']);
 
@@ -436,20 +454,20 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                             $commentaire_data->set_like($id, $like);
                             $response['status'] = 'success';
                             $response['content'] = 'like :' . $like;
-                            
+
                         }else {
                             $commentaire_data->add_liike($user_id, $commentId, $user_role);
                             $response['status'] = 'success';
                             $response['content'] = 'success';
                         }
                         echo json_encode($response);
-        
+
                     } catch (Exception $ex) {
                         $response['status'] = 'warning';
                         $response['content'] = 'Exception: ' . $ex->getMessage();
                         echo json_encode($response);
                     }
-        
+
                     break;
         }
     }

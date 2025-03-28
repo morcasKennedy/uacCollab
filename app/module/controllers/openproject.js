@@ -33,7 +33,7 @@ $(document).ready(() => {
         const url = fx.get_controller_url('project-file');
 
         // connection my form with controller
-        const status = await fx.save(formData, url, 'correctionModal');
+        const status = await fx.save(formData, url, 'correctionModal', 'save');
         if(status) {
             get_data();
             get_version();
@@ -46,11 +46,11 @@ $(document).ready(() => {
 
     $(document).on('click', '.like', async function(e) {
         e.preventDefault();
-    
+
         let commentId = $(this).data("id"); // Utilise $(this) pour récupérer l'ID
         const formData = {
             commentId: commentId,
-           
+
             action: 'save_like'
         }
 
@@ -66,7 +66,7 @@ $(document).ready(() => {
             get_comment(id);
         }
     });
-    
+
 
     // save or update comment
     $(document).on('click', '#save_commentaire', async (e) => {
@@ -82,7 +82,7 @@ $(document).ready(() => {
         const url = fx.get_controller_url('project-file');
 
         // connection my form with controller
-        const status = await fx.send(formData, url, 'correctionModal');
+        const status = await fx.send(formData, url, 'correctionModal', 'save_commentaire');
         if(status) {
             get_data();
             get_version();
@@ -96,9 +96,9 @@ $(document).ready(() => {
         }
     });
 
-    
-    
-    
+
+
+
 
     // get all project file by project
     function get_data() {

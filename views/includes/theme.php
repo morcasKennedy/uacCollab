@@ -49,11 +49,11 @@
         <div class="toast-header">
             <i class="bi bi-bell me-2" id="icon"></i>
             <div class="me-auto fw-semibold" id="title"></div>
-            <small>Just now</small>
+            <small>now</small>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body text-white" id="content">
-            Fruitcake chocolate bar tootsie roll gummies jelly beans cake.
+            
         </div>
     </div>
 

@@ -23,8 +23,13 @@
             case'get_header':
                 $id_project = htmlspecialchars($_POST['id_project']);
                 $resultat = $project->get_by_id($id_project);
+                $limit = 0;
                 if(! empty($resultat)) {
                     foreach($resultat as $data) {
+                        $limit ++;
+                        if($limit > 1) {
+                            continue;
+                        }
                         ?>
                             <img src="assets/etudiants/<?=$data->image ?>"
                             alt="User Avatar">
@@ -322,10 +327,13 @@
                                 }
                             } else {
                                 // Le message que j'ai recu
+                                $last_year = $API->get_last_year();
                                 // Filter les auteur
+                                $sub_role = ! empty($_SESSION['user']['sub_role']) ? $_SESSION['user']['sub_role'] : '';
                                 $auteur = '';
                                 if($data->role == 'encadreur') {
-                                    $auteur = $API->get_encadreur_id($data->auteur);
+                                    $admin = $API->get_admin($data->auteur, $last_year) > 0 ? 'Admin' : 'Encadreur';
+                                    $auteur = $API->get_encadreur_id($data->auteur). ' ' . '<small class="text-dark">'. $admin . '</small>';
                                 } elseif($data->role == 'etudiant') {
                                     $auteur = $API->get_etudiant_id($data->auteur);
                                 } else {

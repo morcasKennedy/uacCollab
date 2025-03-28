@@ -15,7 +15,7 @@
     $commentaire_data = new Commentaire($db);
     $directeur = $project_files->get_project_by_directeur($project_id);
     $comment_project = $project_files->get_all($project_id);
-    
+
 
 
     $title = 'Mes projets';
@@ -78,7 +78,6 @@
                             </select>
                         </form>
                     </div>
-
                 </div>
                 <div class="card-body">
                     <!-- showing a title of project file -->
@@ -89,7 +88,7 @@
                     </div>
 
 
-                    <?php 
+                    <?php
                         if (! empty($comment_project)){
                             ?>
                             <div class="modal-body">
@@ -106,11 +105,10 @@
                             <?php
                         }
                     ?>
-                    
+
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
