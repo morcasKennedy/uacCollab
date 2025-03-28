@@ -17,7 +17,7 @@
     $comment_project = $project_files->get_all($project_id);
     
 
-    
+
     $title = 'Mes projets';
     $page_title = 'UAC collab | ' . $title;
 
@@ -26,6 +26,12 @@
     $id_directeur = !empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : null;
     $btn = "";
     ob_start();
+
+    $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
+    if(empty($_SESSION['user']['id']) OR ! isset($_SESSION['user']['id'])) {
+        header('location:./login');
+        exit;
+    }
 ?>
 
 <title><?=$page_title ?></title>
@@ -43,7 +49,7 @@
                 <div class="card-header py-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <?php 
+                            <?php
                                 if ($role === 'encadreur') {
                                     $btn = 'Envoyer la correction';
                                     foreach ($directeur as $dr){
@@ -58,7 +64,7 @@
                                     $btn = 'Envoyer le travail';
                                 }
                             ?>
-                            
+
                             <button class="btn btn-primary my-1" data-bs-toggle="modal"
                                 data-bs-target="#correctionModal"><?= $btn ?></button>
                             <button class="btn btn-primary my-1"  data-bs-toggle="modal"
@@ -77,7 +83,6 @@
                 <div class="card-body">
                     <!-- showing a title of project file -->
                     <h1><span id="title_commentaire"></span></h1>
-
                     <div class="post-container">
                         <div id="get_title_comment"></div>
                         <div id="get_comment"></div>
@@ -102,8 +107,6 @@
                         }
                     ?>
                     
-
-
                 </div>
             </div>
         </div>
@@ -113,7 +116,7 @@
 
 <!-- Modal de correction -->
 <div class="modal fade" id="correctionModal" tabindex="-1" aria-labelledby="correctionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Ajouter une correction</h5>
@@ -161,7 +164,7 @@
 
 <!-- detail du fichier -->
 <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="correctionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Détails du fichier</h5>
@@ -177,12 +180,8 @@
 <!-- Telechargement de fichier -->
 <!-- Modal -->
 <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content"  id="data_version_commentaire_file">
-            
-           
-                <!-- Affichage dynamique si nécessaire -->
-                
 
         </div>
     </div>
