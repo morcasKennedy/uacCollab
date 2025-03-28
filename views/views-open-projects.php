@@ -77,6 +77,13 @@
                 <div class="card-body">
                     <!-- showing a title of project file -->
                     <h1><span id="title_commentaire"></span></h1>
+
+                    <div class="post-container">
+                        <div id="get_title_comment"></div>
+                        <div id="get_comment"></div>
+                    </div>
+
+
                     <?php 
                         if (! empty($comment_project)){
                             ?>

@@ -3,6 +3,8 @@ require_once('../config/config.php');
 require_once '../app/module/functions/functions.php';
 require_once('../models/model-project-file.php');
 require_once('../models/model-commentaire.php');
+require_once('../models/model-api.php');
+
 
 session_start();
 
@@ -10,9 +12,11 @@ $database = new Connexion();
 $db = $database->get_connexion();
 
 $type = ! empty($_SESSION['user']['role']) && $_SESSION['user']['role'] != 'encadreur' ? 'soumission' : 'correction';
-
+$user_id = !empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
+$user_role = !empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : null;
 $project_file = new Project_file($db);
 $commentaire_data = new Commentaire($db);
+$api = new Api($db);
 
 
 
@@ -28,7 +32,6 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
             try {
                 $commentaire = htmlspecialchars($_POST['commentaire']);
                 $projet_id = htmlspecialchars($_POST['id_project']);
-                $user_id = !empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
 
                 $name_file = 'fichier' ?? null;
                 $path = '../assets/projets/';
@@ -131,13 +134,11 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
             
                         if (!empty($results)) {
                             foreach ($results as $rows) {
-                                // On stocke l'ID dans la session (attention : une seule valeur si plusieurs résultats)
-                                $_SESSION['file']['id'] = $rows->id;
-                                $comment_list = $commentaire_data->get_by_id_file($_SESSION['file']['id'])
+    
+                               
                                 ?>
             
-                                <!-- Bloc commentaire -->
-                                <div class="post-container">
+
                                     <!-- Photo de profil + nom + date -->
                                     <div class="post-header">
                                         <img src="assets/etudiants/1.png" alt="Profil" class="avatar">
@@ -153,27 +154,8 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                     </div>
                                     <hr>
                                     <!-- Zone de commentaires (exemples statiques pour l'instant) -->
-                                    <div class="comments-section">
-                                        <?php 
-                                            foreach ($comment_list as $liste){
-                                                ?>
-                                                    <div class="comment">
-                                                        <img src="assets/etudiants/1.png" alt="Profil" class="comment-avatar">
-                                                        <div class="comment-details">
-                                                            <strong><?= $liste->nom . " " . $liste->prenom  ?></strong> <small><?= date('H:i', strtotime($liste->dates)) ?></small>
-                                                            <p><?= $liste->contenu ?></p>
-                                                            <div class="comment-actions">
-                                                                <span>👍 J'aime</span>
-                                                                <span>Répondre</span> 
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                <?php
-                                            }
-                                        ?>
-                                        
-                                    </div>
-                                </div>
+                                    
+                                
 
 
             
@@ -202,6 +184,43 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                     </div>
                     <?php
                 }
+                break;
+                case 'get_comment':
+                    try {
+                        ?>
+                            <div class="comments-section">
+                                <?php 
+                                $version = htmlspecialchars($_POST['version']);
+                                 $comment_list = $commentaire_data->get_comment_by_version($version);
+                                    foreach ($comment_list as $liste){
+                                        $auteur = " ";
+
+                                        if ($liste->role == 'encadreur'){
+                                            $auteur = $api->get_encadreur_id($liste->user);
+                                        }elseif ($liste->role == 'etudiant'){
+                                            $auteur = $api->get_etudiant_id($liste->user);
+                                        }
+                                        ?>
+                                            <div class="comment">
+                                                <img src="assets/etudiants/1.png" alt="Profil" class="comment-avatar">
+                                                <div class="comment-details">
+                                                    <strong><?=$auteur ?></strong> <small><?=date('H:i', strtotime($liste->dates)) ?></small>
+                                                    <p><?= $liste->contenu ?></p>
+                                                    <div class="comment-actions">
+                                                        <span class="like" data-id="<?=$liste->id ?>"><i class="bi bi-heart<?=$commentaire_data->toggle_like($user_id, $liste->id, $user_role)?> text-danger"></i> J'aime <small class="love"><?=$commentaire_data->count_like($liste->id)?></small> </span>
+                                                        <span>Répondre</span> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php
+                                    }
+                                ?>
+                                
+                            </div>
+                        <?php
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
                 break;
 
                 case 'data_version':
@@ -369,27 +388,18 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                     <?php
                 }
             break;
-            
-        }
-    }
 
-    if (isset($_POST['action']) && !empty($_POST['action'])) {
-        $action = htmlspecialchars($_POST['action']);
-    
-        switch ($action) {
-    
             case 'save_commentaire':
                 header('Content-Type: application/json');
                 $response = [];
                 
                 try {
                     $description = htmlspecialchars($_POST['description']);
-                    $id_file = !empty($_SESSION['file']['id']) ? $_SESSION['file']['id'] : 0;
-                    $user_id = !empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
-                    $role = !empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : null;
-                    $filtre = null;
+                    $id_file = htmlspecialchars($_POST['version']);
+                    
+                    $filtre = 0;
 
-                    $commentaire_data->setCommentaire($description,$filtre, $user_id,$id_file, $role);
+                    $commentaire_data->setCommentaire($description,$filtre, $user_id,$id_file, $user_role);
     
     
                     if ($commentaire_data->create()){
@@ -409,6 +419,45 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                 }
     
                 break;
-                
-            }
+
+                case 'save_like':
+                    header('Content-Type: application/json');
+                    $response = [];
+                    
+                    try {
+                        $commentId = htmlspecialchars($_POST['commentId']);
+
+                        $result = $commentaire_data->verify_like_exist($user_id, $commentId, $user_role);
+                        if (! empty($result)){
+                            $like = 0;
+                            $id = null;
+                            foreach ($result as $data){
+                                if ($data->likes == 0){
+                                    $like = 1;
+                                }else{
+                                    $like = 0;
+                                }
+                                $id = $data->id;
+                            }
+
+                            $commentaire_data->set_like($id, $like);
+                            $response['status'] = 'success';
+                            $response['content'] = 'like :' . $like;
+                            
+                        }else {
+                            $commentaire_data->add_liike($user_id, $commentId, $user_role);
+                            $response['status'] = 'success';
+                            $response['content'] = 'success';
+                        }
+                        echo json_encode($response);
+        
+                    } catch (Exception $ex) {
+                        $response['status'] = 'warning';
+                        $response['content'] = 'Exception: ' . $ex->getMessage();
+                        echo json_encode($response);
+                    }
+        
+                    break;
+            
         }
+    }
