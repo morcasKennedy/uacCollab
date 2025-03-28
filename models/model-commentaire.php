@@ -57,6 +57,22 @@ class Commentaire {
         return $stmt->fetch();
     }
 
+    public function get_comment_by_version($version){
+        $query = 'SELECT * FROM commentaire WHERE id_file = ? AND status = ? AND filtre = ?';
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            $version,
+            $this->status,
+            0
+        ]);
+
+        $result = [];
+        while($row = $stmt->fetch()) {
+            $result[] = $row;
+        }
+        return $result;
+    }
+
     public function get_by_id_file($id) {
         $query = "
             SELECT
@@ -81,7 +97,7 @@ class Commentaire {
 
 
             if ($row->role === 'encadreur') {
-                $row->nom = $row->encadreur_nom;
+                $row['nom'] = $row->encadreur_nom;
                 $row->prenom = $row->encadreur_prenom;
             } else if ($row->role === 'etudiant') {
                 $row->nom = $row->etudiant_nom;
@@ -126,5 +142,69 @@ class Commentaire {
         $stmt = $this->db->prepare($query);
 
         return $stmt->execute([$id]);
+    }
+
+    public function add_liike($user, $commentaire, $role){
+        $query = 'INSERT INTO likes VALUES (?, ?, ?, ?, ?)';
+        $stmt = $this->db->prepare($query);
+
+        return $stmt->execute([
+          null,
+          1,
+          $user,
+          $commentaire, 
+          $role]);
+    }
+
+    public function verify_like_exist($user, $commentaire, $role){
+        $query = 'SELECT * FROM likes WHERE user = ? AND commentaire = ? AND role = ?';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $user, $commentaire, $role
+            ]);
+
+            $result = [];
+            while($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+    }
+
+    public function set_like($id, $like){
+        $query = 'UPDATE likes SET likes = ? WHERE id = ?';
+        $stmt = $this->db->prepare($query);
+
+        return $stmt->execute([
+            $like,
+            $id
+        ]);
+    }
+
+    public function toggle_like($user, $commentaire, $role){
+        $query = 'SELECT COUNT(*) as nb FROM likes WHERE user = ? AND commentaire = ? AND role = ? AND likes = ?';
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            $user, $commentaire, $role, 1
+        ]);
+
+        $result = 0;
+        while($row = $stmt->fetch()) {
+            $result = $row->nb;
+        }
+        return $result > 0 ? '-fill' : '';
+    }
+
+    public function count_like($commentaire){
+        $query = 'SELECT COUNT(*) as nb FROM likes WHERE  commentaire = ?  AND likes = ?';
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            $commentaire, 1
+        ]);
+
+        $result = 0;
+        while($row = $stmt->fetch()) {
+            $result = $row->nb;
+        }
+        return $result > 0 ? $result : '';
     }
 }
