@@ -36,44 +36,51 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                 $name_file = 'fichier' ?? null;
                 $path = '../assets/projets/';
                 $extension = ['doc', 'docx'];
+                
+                if (! empty($commentaire && $name_file)){
 
-                $version = $project_file->get_version_by_project($projet_id);
+                    $version = $project_file->get_version_by_project($projet_id);
 
-                $project_file->Project_files($projet_id,$name_file, $user_id,$commentaire, $type, $version);
+                    $project_file->Project_files($projet_id,$name_file, $user_id,$commentaire, $type, $version);
 
+                    if ($project_file->create()){
+                        $last_id = $db->lastInsertId();
 
-                if ($project_file->create()){
-                    $last_id = $db->lastInsertId();
+                        $result = Functions::upload_file($name_file, $path, $last_id, $extension);
 
-                    $result = Functions::upload_file($name_file, $path, $last_id, $extension);
+                        $insertStatus = false;
 
-                    $insertStatus = false;
+                        if ($result['success']){
+                            $insertStatus = true;
+                        }else{
+                            $response['status'] = 'info';
+                            $response['content'] = $result['message'];
+                        }
 
-                    if ($result['success']){
-                        $insertStatus = true;
-                    }else{
-                        $response['status'] = 'info';
-                        $response['content'] = $result['message'];
-                    }
-
-                    if ($insertStatus){
-                        if ($project_file->update_file($result['message'],$last_id)){
-                            $response['status'] = 'success';
-                            $response['content'] = 'enregistrement réussi avec succès';
+                        if ($result['success']){
+                            if ($project_file->update_file($result['message'],$last_id)){
+                                $response['status'] = 'success';
+                                $response['content'] = 'enregistrement réussi avec succès';
+                            }else{
+                                $response['status'] = 'error';
+                                $response['content'] = 'echec d\'envoi du fichier';
+                            }
+                            
                         }else{
                             $response['status'] = 'error';
-                            $response['content'] = 'echec d\'envoi du fichier';
+                            $response['content'] = $result['message'];
                         }
                         
                     }else{
                         $response['status'] = 'error';
-                        $response['content'] = 'echec d\'envoi du fichier';
-                    }
-                    
-                }else{
-                    $response['status'] = 'error';
                         $response['content'] = 'Erreur lors de l\'enregistrement en base.';
+                    }
+
+                }else{
+                    $response['status'] = 'info';
+                    $response['content'] = 'Comptétez les champs obligatoires.';
                 }
+                
                 
 
                 echo json_encode($response);
@@ -399,17 +406,22 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                     
                     $filtre = 0;
 
-                    $commentaire_data->setCommentaire($description,$filtre, $user_id,$id_file, $user_role);
+                    if (! empty($description && $id_file)){
+
+                        $commentaire_data->setCommentaire($description,$filtre, $user_id,$id_file, $user_role);
     
-    
-                    if ($commentaire_data->create()){
-                        $response['status'] = 'success';
-                        $response['content'] = 'enregistrement réussi avec succès';
+                        if ($commentaire_data->create()){
+                            $response['status'] = 'success';
+                            $response['content'] = 'enregistrement réussi avec succès';
+                        }else{
+                            $response['status'] = 'error';
+                            $response['content'] = 'echec d\'enregistrement';
+                        }
                     }else{
-                        $response['status'] = 'error';
-                        $response['content'] = 'echec d\'enregistrement';
+                        $response['status'] = 'info';
+                        $response['content'] = 'Compléter le commentaire svp!';
                     }
-                        
+
                     echo json_encode($response);
     
                 } catch (Exception $ex) {
