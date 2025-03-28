@@ -28,7 +28,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
         case 'save':
             header('Content-Type: application/json');
             $response = [];
-            
+
             try {
                 $commentaire = htmlspecialchars($_POST['commentaire']);
                 $projet_id = htmlspecialchars($_POST['id_project']);
@@ -70,7 +70,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                             $response['status'] = 'error';
                             $response['content'] = $result['message'];
                         }
-                        
+
                     }else{
                         $response['status'] = 'error';
                         $response['content'] = 'Erreur lors de l\'enregistrement en base.';
@@ -80,8 +80,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                     $response['status'] = 'info';
                     $response['content'] = 'Comptétez les champs obligatoires.';
                 }
-                
-                
+
 
                 echo json_encode($response);
 
@@ -98,7 +97,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                 try {
                     $id_project = htmlspecialchars($_POST['id_project']);
                     $result = $project_file->get_all($id_project);
-                    
+
                     if (!empty($result)) {
                         $i = 1;
                         foreach ($result as $row) {
@@ -108,7 +107,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                 <td><?= htmlspecialchars($row->commentaire) ?></td>
                                 <td><?= Functions::date_format($row->date) . ', ' . substr($row->date, 11, 5) ?></td>
                                 <td><?= htmlspecialchars($row->type) ?></td>
-                                
+
                                 <td class="text-center">
                                     <a href="#" class="text-primary"><i class="bi bi-pencil-square me-3"></i></a>
                                     <a href="#" class="text-danger"><i class="bi bi-trash me-3"></i></a>
@@ -123,7 +122,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                         </tr>
                         <?php
                     }
-            
+
                 } catch (PDOException $e) {
                     echo '<tr><td colspan="6" class="text-danger">Erreur : ' . $e->getMessage() . '</td></tr>';
                 }
@@ -135,16 +134,15 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                     if (isset($_POST['id_project'], $_POST['version'])) {
                         $id_project = htmlspecialchars($_POST['id_project']);
                         $version = htmlspecialchars($_POST['version']);
-            
+
                         // On récupère les résultats depuis le modèle
                         $results = $project_file->get_title($id_project, $version);
-            
+
                         if (!empty($results)) {
                             foreach ($results as $rows) {
     
                                
-                                ?>
-            
+                                ?>          
 
                                     <!-- Photo de profil + nom + date -->
                                     <div class="post-header">
@@ -161,11 +159,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                     </div>
                                     <hr>
                                     <!-- Zone de commentaires (exemples statiques pour l'instant) -->
-                                    
-                                
 
-
-            
                                 <?php
                             }
                         } else {
@@ -183,7 +177,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                         </div>
                         <?php
                     }
-            
+
                 } catch (PDOException $e) {
                     ?>
                     <div class="text-danger text-center">
@@ -236,14 +230,14 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                         if (isset($_POST['id_project'], $_POST['version'])) {
                             $id_project = htmlspecialchars($_POST['id_project']);
                             $version = htmlspecialchars($_POST['version']);
-                
+
                             // On récupère les résultats depuis le modèle
                             $resultss = $project_file->get_title($id_project, $version);
-                
+
                             if (!empty($resultss)) {
                                 foreach ($resultss as $rowss) {
                                     ?>
-                                       
+
                                         <div class="mb-3">
                                             <label for="commentaire"><?= $rowss->commentaire ?></label>
                                             <p></p>
@@ -260,7 +254,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                         <div class="mb-3">
                                             <label for="fichier">Version : <?= $rowss->version ?></label>
                                         </div>
-                
+
                                     <?php
                                 }
                             } else {
@@ -278,7 +272,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                             </div>
                             <?php
                         }
-                
+
                     } catch (PDOException $e) {
                         ?>
                         <div class="text-danger text-center">
@@ -294,10 +288,10 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                             if (isset($_POST['id_project'], $_POST['version'])) {
                                 $id_project = htmlspecialchars($_POST['id_project']);
                                 $version = htmlspecialchars($_POST['version']);
-                    
+
                                 // On récupère les résultats depuis le modèle
                                 $resultsss = $project_file->get_title($id_project, $version);
-                    
+
                                 if (!empty($resultsss)) {
                                     foreach ($resultsss as $rowsss) {
                                         ?>
@@ -309,7 +303,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                                 <div class="mb-3">
                                                     <p class="text-muted">Ce fichier ne peut être lu ici, prière de le télécharger svp!</p>
                                                     <a href="./assets/projets/<?=$rowsss->fichier?>" download class="btn btn-primary w-100">Télécharger <i class="bi bi-download mx-2"></i></a>
-                                                    
+
                                                 </div>
                                             </div>
                                         <?php
@@ -329,7 +323,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                 </div>
                                 <?php
                             }
-                    
+
                         } catch (PDOException $e) {
                             ?>
                             <div class="text-danger text-center">
@@ -338,8 +332,8 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                             <?php
                         }
                         break;
-            
-            
+
+
             case 'get_version':
                 try {
                     $id_project = htmlspecialchars($_POST['id_project']);
@@ -369,7 +363,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                             <div class="p-3 bg-cover">
                                 <div class="justify-content-between d-flex">
                                     <h3 class="text-white"><?= $data->titre?></h3>
-                                    
+
                                 </div>
                                 <p><b><?= $data->nom . " " . $data->postnom . " " . $data->prenom ?></b></p>
                                 <b><?= $data->promotion ?></b>
@@ -399,7 +393,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
             case 'save_commentaire':
                 header('Content-Type: application/json');
                 $response = [];
-                
+
                 try {
                     $description = htmlspecialchars($_POST['description']);
                     $id_file = htmlspecialchars($_POST['version']);
@@ -417,21 +411,21 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                             $response['status'] = 'error';
                             $response['content'] = 'echec d\'enregistrement';
                         }
+
                     }else{
                         $response['status'] = 'info';
                         $response['content'] = 'Compléter le commentaire svp!';
                     }
 
                     echo json_encode($response);
-    
+
                 } catch (Exception $ex) {
                     $response['status'] = 'warning';
                     $response['content'] = 'Exception: ' . $ex->getMessage();
                     echo json_encode($response);
                 }
-    
-                break;
 
+                break;
                 case 'save_like':
                     header('Content-Type: application/json');
                     $response = [];
@@ -470,6 +464,5 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                     }
         
                     break;
-            
         }
     }

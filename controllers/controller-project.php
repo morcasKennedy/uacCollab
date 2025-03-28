@@ -11,6 +11,8 @@
 
     session_start();
 
+    $user_timezone = ! empty($_SESSION['user_timezone']) ? $_SESSION['user_timezone'] : 'UTC';
+
     $project = new Project($db);
     $chat = new Message($db);
     $API = new Api($db);
@@ -192,7 +194,7 @@
                                                     }
                                                     ?>
                                                         <div class="flex-grow-1 ms-1">
-                                                            <span class="float-end text-muted"><?=substr($row->date, 11, 5) ?></span>
+                                                            <span class="float-end text-muted"><?=Functions::local_time($row->date, $user_timezone) ?></span>
                                                             <p class="text-body mb-1"><b><?=$data->titre ?></b></p>
                                                             <?php
                                                                 $count_message = $chat->count($id_project, $encadreur_id, $role);
@@ -243,7 +245,7 @@
                                                     }
                                                     ?>
                                                         <div class="flex-grow-1 ms-1">
-                                                            <span class="float-end text-muted"><?=substr($row->date, 11, 5) ?></span>
+                                                            <span class="float-end text-muted"><?=Functions::local_time($row->date, $user_timezone) ?></span>
                                                             <p class="text-body mb-1"><b><?=$data->titre ?></b></p>
                                                             <?php
                                                                 $count_message = $chat->count($id_project, $encadreur_id, $role);
@@ -312,7 +314,7 @@
                                         }
                                         ?>
                                             <div class="flex-grow-1 ms-1">
-                                                <span class="float-end text-muted"><?=substr($row->date, 11, 5) ?></span>
+                                                <span class="float-end text-muted"><?=Functions::local_time($row->date, $user_timezone) ?></span>
                                                 <p class="text-body mb-1"><b>Groupe</b></p>
                                                 <?php
                                                     $count_message = $chat->count(0, $encadreur_id, $role);

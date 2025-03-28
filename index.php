@@ -25,3 +25,20 @@
         $page = $url;
         require_once './views/views-404.php';
     }
+
+    if (isset($_POST['timezone'])) {
+        $_SESSION['user_timezone'] = $_POST['timezone'];
+    }
+?>
+<script>
+    // Récupère le fuseau horaire de l'utilisateur
+    var userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // Envoie le fuseau horaire au serveur via AJAX
+    fetch('index.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'timezone=' + encodeURIComponent(userTimezone)
+    });
+</script>
