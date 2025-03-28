@@ -176,7 +176,7 @@ INSERT INTO inscription (dates, description, etudiant, promotion, annee, status)
 ('2025-03-05', 'Reinscription en troisième année', 5, 5, 1, 1);
 
 INSERT INTO encadreur (nom, postnom, prenom, genre, date_naissance, lieu_naissance, adresse, image, telephone, email, mot_de_passe, status) VALUES
-('Katanga', 'Mulumba', 'Jean', 'M', '1980-04-10', 'Kinshasa', 'Avenue 10', '1.png', '0998888881', 'JeanKatanga@uaconline.edu.cd', 'encapass123', 1),
+('OKUTI', 'ADHAKU', 'Jerome', 'M', '1980-04-10', 'Kinshasa', 'Avenue 10', '1.png', '0998888881', 'ok@uaconline.edu.cd', 'encapass123', 1),
 ('Tshibangu', 'Lutumba', 'Marie', 'F', '1985-06-15', 'Lubumbashi', 'Avenue 11', '2.png', '0998888882', 'MarieTshibangu@uaconline.edu.cd', 'encapass456', 1),
 ('Kabwe', 'Mwanza', 'Patrick', 'M', '1978-02-20', 'Matadi', 'Avenue 12', '3.png', '0998888883', 'PatrickKabwe@uaconline.edu.cd', 'encapass789', 1),
 ('Mubenga', 'Kasongo', 'Esther', 'F', '1982-09-05', 'Goma', 'Avenue 13', '4.png', '0998888884', 'EstherMubenga@uaconline.edu.cd', 'encapass321', 1),

@@ -206,6 +206,9 @@ a {
     border: 0;
     outline: 0;
 }
+input[type="password"]::-ms-reveal {
+    display: none;
+}
 
 .loading {
     border: 3px solid #f3f3f3;
