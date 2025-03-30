@@ -155,8 +155,9 @@
             return $result;
         }
 
-        public function get_all() {
+        public function get_all($annee) {
             $query = "SELECT
+                DISTINCT
                 projet.id AS id,
                 projet.dates AS date,
                 projet.titre AS titre,
@@ -182,10 +183,12 @@
                 promotion.id = inscription.promotion AND
                 departement.id = promotion.departement AND
                 projet_encadreur.projet = projet.id AND
-                projet.status = ?";
+                projet.status = ? AND
+                inscription.annee = ?";
             $stmt = $this->db->prepare($query);
             $stmt->execute([
                 $this->status,
+                $annee
             ]);
 
             $result = [];

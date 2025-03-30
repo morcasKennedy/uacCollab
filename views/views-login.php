@@ -9,15 +9,26 @@
     // Se doconnecter si il cliquer sur le bouton logout
     if(str_contains($url, 'logout')) {
       session_destroy();
+      setcookie("sub_role", "", time() - 3600, "/");
+      setcookie("user_id", "", time() - 3600, "/");
+      setcookie("user_role", "", time() - 3600, "/");
+      setcookie("user_name", "", time() - 3600, "/");
+      setcookie("user_path", "", time() - 3600, "/");
       header('location:./login');
     }
 
     // Se connecter lors que use a ete connecter pour la premiere fois
+    $_SESSION['user']['id'] = ! empty($_COOKIE['user_id']) ? $_COOKIE['user_id'] : '';
     if(! empty($_SESSION['user']['id'])) {
+      $_SESSION['user']['id'] = ! empty($_COOKIE['user_id']) ? $_COOKIE['user_id'] : '';
+      $_SESSION['user']['role'] = ! empty($_COOKIE['user_role']) ? $_COOKIE['user_role'] : '';
+      $_SESSION['user']['name'] = ! empty($_COOKIE['user_name']) ? $_COOKIE['user_name'] : '';
+      $_SESSION['user']['path'] = ! empty($_COOKIE['user_path']) ? $_COOKIE['user_path'] : '';
+      $_SESSION['user']['sub_role'] = ! empty($_COOKIE['sub_role']) ? $_COOKIE['sub_role'] : '';
+
       header('location:./');
       exit;
     }
-
 ?>
 
 <title><?=$page_title ?></title>
@@ -27,7 +38,7 @@
       <div class="auth-form">
         <div class="auth-header">
           <a href="./"><img src="./assets/themes/logo.png" class="img-collab" alt="logo">
-          <b>UAC collab</b></a>
+          <b>UAC collab Login</b></a>
         </div>
         <div class="card my-5">
           <div class="card-body">
@@ -44,9 +55,9 @@
             </div>
 
             <div class="d-flex mt-1 justify-content-between">
-              <div class="form-check">
-                <input autocomplete="off" class="form-check-input input-primary" type="checkbox" id="customCheckc1" >
-                <label class="form-check-label text-muted" for="customCheckc1">Rester connecté ?</label>
+              <div class="form-check form-switch">
+                <input autocomplete="off" class="form-check-input input-primary" type="checkbox" id="remember" >
+                <label class="form-check-label text-muted" for="remember">Rester connecté ?</label>
               </div>
             </div>
             <div class="d-grid mt-4">
