@@ -1,91 +1,181 @@
 import * as fx from '../functions/functions.js';
+let refreshInterval = null;  // Variable globale pour stocker le setInterval
+// Fonction pour démarrer le rafraîchissement
+function startRefreshing() {
+    if (refreshInterval) {
+        clearInterval(refreshInterval); // S'assurer qu'on ne crée pas plusieurs intervalles
+    }
+    refreshInterval = setInterval(() => {
+        console.log("Actualisation automatique en cours...");
+        const id = fx.get_value('version');
+        if (id){
+            get_title(id);
+            get_comment(id);
+        }
+    }, 5000); // Rafraîchissement toutes les 5 secondes
+}
 
 $(document).ready(() => {
-
     // Get project id from url
     const path = window.location.pathname;
     const parts = path.split("-");
-
     let id_project = 0;
     if (parts[1]){
         id_project = parts[1];
     }
-
     get_conversation_group();
     get_conversation();
     get_count_convesation();
     get_version();
     get_data();
     get_project();
+    get_encadreur();
 
     // handller for to save or update data
     $(document).on('click', '#save', async (e) => {
         e.preventDefault();
-
+        let commentaire = fx.get_value('commentaire');
+        let fichier = fx.get_file('fichier');
+        if (!commentaire || !fichier){
+            fx.show_message('Tous les champs sont obligatoires', 'info');
+            return;
+        }
         const formData = {
-            commentaire: fx.get_value('commentaire'),
-            fichier: fx.get_file('fichier'),
+            commentaire: commentaire,
+            fichier: fichier,
             id_project: id_project,
             action: 'save'
         }
-
         // get path to controller files
         const url = fx.get_controller_url('project-file');
-
         // connection my form with controller
         const status = await fx.save(formData, url, 'correctionModal');
         if(status) {
             get_data();
             get_version();
             get_project();
-
-            const id = fx.get_value('version');
-            get_title(id);
+            $('#data_version_commentaire_file').html('chargement en cours');
         }
     });
+
+    setInterval(()=> {
+        const id = fx.get_value('version');
+        if (id){
+            get_title(id);
+        }
+    }, 500);
+
+    setInterval(()=> {
+        const id = fx.get_value('version');
+        if (id){
+            get_data_version_file(id);
+            get_data_version(id);
+        }
+    }, 3000);
 
     $(document).on('click', '.like', async function(e) {
         e.preventDefault();
-    
-        let commentId = $(this).data("id"); // Utilise $(this) pour récupérer l'ID
+        let commentId = $(this).data("id");
         const formData = {
             commentId: commentId,
-           
             action: 'save_like'
         }
-
         // get path to controller files
         const url = fx.get_controller_url('project-file');
-
         // connection my form with controller
         const status = await fx.send(formData, url, 'correctionModal');
         if(status) {
-
             const id = fx.get_value('version');
-            get_title(id);
-            get_comment(id);
+            if(id){
+                get_title(id);
+            }
+            const id_file = fx.get_value('id_file');
+            if(id_file){
+                get_comment(id_file);
+            }
         }
     });
-    
+
+    startRefreshing();
+    // Stopper le rafraîchissement lorsqu'on clique sur "Répondre"
+    $(document).on('click', '.reponse', function(e) {
+        e.preventDefault();
+        let commentId = $(this).data("id");
+        const container = $('#zone-reponse-' + commentId);
+        // Masquer tous les autres formulaires et retirer la classe visible
+        $(".reponse-form").hide().removeClass("form-visible");
+        // Afficher le formulaire du commentaire cliqué et ajouter une classe pour dire qu’il est actif
+        $("#reponse-form-" + commentId).show().addClass("form-visible");
+        // Vérifier si les réponses sont déjà chargées
+        if (!container.is(':visible')) {
+            $.ajax({
+                type: 'POST',
+                url: fx.get_controller_url('project-file'), // Ton fichier contrôleur
+                data: {
+                    action: 'get_reponses',
+                    id_commentaire: commentId
+                },
+                success: function(response) {
+                    container.html(response).slideDown();
+                },
+                error: function(xhr, status, error) {
+                    alert("Une erreur s'est produite : " + xhr.responseText);
+                    console.error(xhr);
+                }
+            });
+        } else {
+            // Si les réponses sont déjà visibles, ne rien faire
+            container.slideUp();
+        }
+        // Optionnel : stop le rafraîchissement automatique si nécessaire
+        clearInterval(refreshInterval);
+    });
+
+    // Envoi de la réponse et redémarrage du rafraîchissement
+    $(document).on('click', '.envoyer-reponse', async function(e) {
+        e.preventDefault();
+        let commentId = $(this).data("id"); // D'abord récupérer l'ID du commentaire
+        let reponse = $("#reponse-text-" + commentId).val();
+        // Préparation des données à envoyer
+        const formData = {
+            version: fx.get_value('version'),
+            action: 'envoyer-reponse',
+            id_commentaire: commentId,
+            reponse: reponse
+        };
+        const url = fx.get_controller_url('project-file');
+        // Envoi des données via fx.send
+        const status = await fx.send(formData, url, 'correctionModal');
+        if (status) {
+            // Vider le champ et cacher le formulaire
+            $("#reponse-text-" + commentId).val('');
+            $("#reponse-form-" + commentId).hide().removeClass('form-visible');
+            // Recharger les commentaires
+            const id = fx.get_value('version');
+            if(id){
+                get_title(id);
+            }
+            const id_file = fx.get_value('id_file');
+            if(id_file){
+                get_comment(id_file);
+            }
+        }
+    });
 
     // save or update comment
     $(document).on('click', '#save_commentaire', async (e) => {
         e.preventDefault();
-
         const formData = {
             description: fx.get_value('description'),
-            version: fx.get_value('version'),
+            version: fx.get_value('id_file'),
             action: 'save_commentaire'
         }
-
         // get path to controller files
         const url = fx.get_controller_url('project-file');
-
         // connection my form with controller
         const status = await fx.send(formData, url, 'correctionModal');
         if(status) {
             get_data();
-            get_version();
             get_project();
             $('#description').val('');
 
@@ -96,10 +186,19 @@ $(document).ready(() => {
         }
     });
 
-    
-    
-    
-
+    // save or update comment
+    $(document).on('click', '#save_collaborate', async (e) => {
+        e.preventDefault();
+        const formData = {
+            encadreur: fx.get_value('encadreur'),
+            id_project: id_project,
+            action: 'save_collaborate'
+        }
+        // get path to controller files
+        const url = fx.get_controller_url('project-file');
+        // connection my form with controller
+        await fx.save(formData, url, 'encadreurModal');
+    });
     // get all project file by project
     function get_data() {
         const data = {
@@ -112,7 +211,6 @@ $(document).ready(() => {
             data: data, url: url, container: container
         });
     }
-
     // get project
     function get_project() {
         const data = {
@@ -125,7 +223,6 @@ $(document).ready(() => {
             data: data, url: url, container: container
         });
     }
-
     function get_conversation_group() {
         const data = {
             action: 'get_conversation_group',
@@ -136,7 +233,6 @@ $(document).ready(() => {
             data: data, url: url, container: container
         });
     }
-
     function get_conversation() {
         const data = {
             action: 'get_conversation',
@@ -147,7 +243,14 @@ $(document).ready(() => {
             data: data, url: url, container: container
         });
     }
-
+    // get encadreur
+    function get_encadreur() {
+        const data = {
+            action: 'get_encadreur'
+        };
+        const url = fx.get_controller_url('project-file');
+        fx.fill_select(url, data, 'encadreur');
+    }
     //get title of file project
     function get_title(id){
         const data = {
@@ -162,7 +265,12 @@ $(document).ready(() => {
         });
     }
 
-    function get_comment(id){
+    function get_comment(id) {
+        // S’il y a une réponse en cours, on ne recharge pas les commentaires
+        if ($(".reponse-form.form-visible").length > 0) {
+            console.log("Réponse en cours → pas de refresh des commentaires.");
+            return;
+        }
         const data = {
             id_project: id_project,
             version: id,
@@ -174,7 +282,6 @@ $(document).ready(() => {
             data: data, url: url, container: container
         });
     }
-
     //get data of version
     function get_data_version(id){
         const data = {
@@ -188,7 +295,6 @@ $(document).ready(() => {
             data: data, url: url, container: container
         });
     }
-
      //get file of version
      function get_data_version_file(id){
         const data = {
@@ -202,48 +308,53 @@ $(document).ready(() => {
             data: data, url: url, container: container
         });
     }
-
     // get etudiant
-        function get_version() {
-            const data = {
-                id_project: id_project,
-                action: 'get_version'
-            };
-
-            const url = fx.get_controller_url('project-file');
-            fx.fill_select(url, data, 'version');
-        }
-
-        function get_count_convesation() {
-            const data = {
-                action: 'get_count_convesation',
-            };
-            const url = fx.get_controller_url('project');
-            const container = 'count_convesation';
-            fx.handle_display({
-                data: data, url: url, container: container
-            });
-        }
-
-        $('#version').on('change', function(){
-            let id = $(this).val();
-            get_title(id);
-            get_comment(id);
+    function get_version() {
+        const data = {
+            id_project: id_project,
+            action: 'get_version'
+        };
+        const url = fx.get_controller_url('project-file');
+        fx.fill_select(url, data, 'version');
+    }
+    function get_count_convesation() {
+        const data = {
+            action: 'get_count_convesation',
+        };
+        const url = fx.get_controller_url('project');
+        const container = 'count_convesation';
+        fx.handle_display({
+            data: data, url: url, container: container
         });
-
+    }
+    $('#version').on('change', function(){
+        let id = $(this).val();
+        get_title(id);
         setTimeout(()=>{
-            const id = fx.get_value('version');
-            get_title(id);
-            get_data_version(id);
-            get_data_version_file(id);
-        }, 100);
+            let id_file = fx.get_value('id_file');
+            if (id_file){
+                get_comment(id_file);
+            }
 
-        setInterval(()=> {
-            const id = fx.get_value('version');
-            get_conversation();
-            get_conversation_group();
-            get_count_convesation();
-            get_comment(id);
-        }, 3000);
+        }, 200)
+
+    });
+
+    setTimeout(()=>{
+        const id = fx.get_value('version');
+        get_title(id);
+        get_data_version(id);
+        get_data_version_file(id);
+    }, 100);
+
+    setInterval(()=> {
+        const id_file = fx.get_value('id_file');
+        get_conversation();
+        get_conversation_group();
+        get_count_convesation();
+        if(id_file){
+            get_comment(id_file);
+        }
+    }, 3000);
 
 });
