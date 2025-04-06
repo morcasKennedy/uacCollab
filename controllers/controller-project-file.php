@@ -4,6 +4,7 @@ require_once '../app/module/functions/functions.php';
 require_once('../models/model-project-file.php');
 require_once('../models/model-commentaire.php');
 require_once('../models/model-api.php');
+require_once('../models/model-project.php');
 
 
 session_start();
@@ -14,9 +15,11 @@ $db = $database->get_connexion();
 $type = ! empty($_SESSION['user']['role']) && $_SESSION['user']['role'] != 'encadreur' ? 'soumission' : 'correction';
 $user_id = !empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
 $user_role = !empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : null;
+
 $project_file = new Project_file($db);
 $commentaire_data = new Commentaire($db);
 $api = new Api($db);
+$projet = new Project($db);
 
 
 
@@ -205,13 +208,48 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                             <div class="comment">
                                                 <img src="assets/etudiants/1.png" alt="Profil" class="comment-avatar">
                                                 <div class="comment-details">
-                                                    <strong><?=$auteur ?></strong> <small><?=date('H:i', strtotime($liste->dates)) ?></small>
+                                                    <strong><?=$auteur ?></strong>
+                                                    <small><?= Functions::date_format($liste->dates) . ', ' . substr($liste->dates, 11, 5) ?></small>
                                                     <p><?= $liste->contenu ?></p>
+
                                                     <div class="comment-actions">
-                                                        <span class="like" data-id="<?=$liste->id ?>"><i class="bi bi-heart<?=$commentaire_data->toggle_like($user_id, $liste->id, $user_role)?> text-danger"></i> J'aime <small class="love"><?=$commentaire_data->count_like($liste->id)?></small> </span>
-                                                        <span>Répondre</span>
+                                                        <span class="like" data-id="<?=$liste->id ?>">
+                                                            <i class="bi bi-heart<?=$commentaire_data->toggle_like($user_id, $liste->id, $user_role)?> text-danger"></i> 
+                                                            J'aime 
+                                                            <small class="love"><?=$commentaire_data->count_like($liste->id)?></small>
+                                                        </span>
+                                                        <span class="reponse" data-id="<?=$liste->id?>">Répondre</span> 
+                                                        <!-- Nombre de réponses cliquable -->
+                                                        <small class="count text-primary" data-id="<?= $liste->id ?>">
+                                                            <?= $commentaire_data->count_reponse($liste->id) ?> 
+                                                            <?php 
+                                                            // Récupère le nombre de réponses
+                                                            $nombre_reponses = $commentaire_data->count_reponse($liste->id);
+
+                                                            // Vérifie si le nombre de réponses est 0, 1 ou plus
+                                                            if ($nombre_reponses == '') {
+                                                                // Ne rien afficher si aucune réponse
+                                                                echo '';
+                                                            } else if ($nombre_reponses == 1) {
+                                                                // Affiche "réponse" si 1, "réponses" sinon
+                                                                echo 'Réponse';
+                                                            } else {
+                                                                echo 'Réponses';
+                                                            }
+                                                        ?>
+                                                        </small> <br>
+
+                                                        
+                                                    </div>
+                                                    <div class="zone-reponse mt-2" id="zone-reponse-<?= $liste->id ?>" style="display: none;"></div>
+
+                                                    <!-- Formulaire de réponse (caché par défaut) -->
+                                                    <div id="reponse-form-<?=$liste->id?>" class="reponse-form" style="display: none;">
+                                                        <textarea id="reponse-text-<?=$liste->id?>" placeholder="Écrivez votre réponse ici..." class="form-control"></textarea>
+                                                        <button class="btn btn-primary btn-sm envoyer-reponse mt-2 mb-2" data-id="<?=$liste->id?>">Envoyer</button>
                                                     </div>
                                                 </div>
+
                                             </div>
                                         <?php
                                     }
@@ -224,6 +262,37 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                     }
                 break;
 
+                case 'get_reponses':
+                        $id_parent = htmlspecialchars($_POST['id_commentaire']);
+                        $reponses = $commentaire_data->get_reponses_by_commentaire($id_parent);
+                
+                        if ($reponses && count($reponses) > 0) {
+                            foreach ($reponses as $rps) {
+                                if ($rps->role == 'encadreur') {
+                                    $auteur = $api->get_encadreur_id($rps->user);
+                                } elseif ($rps->role == 'etudiant') {
+                                    $auteur = $api->get_etudiant_id($rps->user);
+                                } else {
+                                    $auteur = 'Inconnu';
+                                }
+                                ?>
+                                    <div class="alert alert-secondary mb-1 text-left">
+                                        <strong><?= $auteur ?></strong><br>
+                                        <?= $rps->contenu ?><br>
+                                        <small><?= Functions::date_format($rps->dates) . ', ' . substr($rps->dates, 11, 5)?></small>
+                                    </div>
+                                <?php
+                
+                                
+                            }
+                        } 
+                    
+                    exit;
+                
+                
+
+                
+                               
                 case 'data_version':
                     try {
                         // Vérification et sécurisation des données en entrée
@@ -331,7 +400,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                             </div>
                             <?php
                         }
-                        break;
+                    break;
 
 
             case 'get_version':
@@ -467,7 +536,100 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                         $response['content'] = 'Exception: ' . $ex->getMessage();
                         echo json_encode($response);
                     }
+        
+                break;
 
+                case 'envoyer-reponse':
+                    header('Content-Type: application/json');
+                    $response = [];
+                
+                    try {
+                        $reponse = trim(htmlspecialchars($_POST['reponse'] ?? ''));
+                        $id_file = trim(htmlspecialchars($_POST['version'] ?? ''));
+                        $filtre = trim(htmlspecialchars($_POST['id_commentaire'] ?? ''));
+                
+                        if (!empty($reponse) && !empty($id_file) && !empty($filtre)) {
+                            // Enregistrer le commentaire
+                            $commentaire_data->setCommentaire($reponse, $filtre, $user_id, $id_file, $user_role);
+                
+                            if ($commentaire_data->create()) {
+                                $response['status'] = 'success';
+                                $response['content'] = 'Enregistrement réussi avec succès';
+                            } else {
+                                $response['status'] = 'error';
+                                $response['content'] = 'Échec de l\'enregistrement';
+                            }
+                
+                        } else {
+                            $response['status'] = 'info';
+                            $response['content'] = 'Veuillez compléter tous les champs du formulaire.';
+                        }
+                
+                        echo json_encode($response);
+                
+                    } catch (Exception $ex) {
+                        $response['status'] = 'warning';
+                        $response['content'] = 'Exception : ' . $ex->getMessage();
+                        echo json_encode($response);
+                    }
+                
+                    break;
+                
+
+                case 'get_encadreur':
+                    try {
+                        
+                        $result = $api->get_encadreur();
+                        $msg = false;
+                        foreach($result as $data) {
+                            $msg = true;
+                            if ($data->id != $user_id){
+                                ?><option value="<?=$data->id ?>"><?= $data->nom . " " . $data->prenom ?></option><?php
+                            }
+                            
+                        }
+                        if(! $msg) {
+                            ?><option value="">Chargement en cours...</option><?php
+                        }
+                    }
+                    catch (Exception $ex) {
+                        // En cas d'exception, retourner un message d'avertissement avec le message de l'exception
+                        $response['status'] = 'warning';
+                        $response['content'] = 'Exception ' . $ex->getMessage();
+                    }
+                break;
+
+                case 'save_collaborate':
+                    header('Content-Type: application/json');
+                    $response = [];
+        
+                    try {
+                        $encadreur = htmlspecialchars($_POST['encadreur']);
+                        $id_project = htmlspecialchars($_POST['id_project']);
+                        
+                        if (! empty($encadreur && $id_project)){
+                                if($project->create_encadreur($id_project, $encadreur, true)) {
+                                    $response['status'] = 'success';
+                                    $response['content'] = 'Vous avez ajouté un collaborateur de ce projet';
+
+                                } else {
+                                    $response['status'] = 'error';
+                                    $response['content'] = 'Erreur lors de création du collaborateur';
+                                }
+        
+                        }else{
+                            $response['status'] = 'info';
+                            $response['content'] = 'Comptétez les champs obligatoires.';
+                        }
+        
+        
+                        echo json_encode($response);
+        
+                    } catch (Exception $ex) {
+                        $response['status'] = 'warning';
+                        $response['content'] = 'Exception: ' . $ex->getMessage();
+                        echo json_encode($response);
+                    }
                     break;
         }
     }

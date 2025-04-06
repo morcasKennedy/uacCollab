@@ -56,7 +56,7 @@
                                         if ($dr->encadreur == $id_directeur ) {
                                             ?>
                                                 <button class="btn btn-primary my-1 " data-bs-toggle="modal"
-                                                data-bs-target="#encadreurModal">Collaborateur</button>
+                                                data-bs-target="#encadreurModal">Ajout Collaborateur</button>
                                             <?php
                                         }
                                     }
@@ -138,9 +138,9 @@
     </div>
 </div>
 
-<!-- Modal de correction -->
+<!-- Modal encadreur -->
 <div class="modal fade" id="encadreurModal" tabindex="-1" aria-labelledby="correctionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Ajouter l'encadreur</h5>
@@ -149,12 +149,12 @@
             <div class="modal-body">
                 <div class="my-3">
                     <label for="">Sélectionnez l'enseignant</label>
-                    <select id="enseignant" class="form-select mt-2">
-                        <option value="">Jackson Kennedy</option>
+                    <select id="encadreur" class="form-select mt-2">
+                        <option value="">Jackson Kennedy MABHULUKO</option>
                     </select>
                 </div>
 
-                <button id="save" class="btn btn-primary">Envoyer</button>
+                <button id="save_collaborate" class="btn btn-primary">Envoyer</button>
             </div>
         </div>
     </div>
@@ -175,7 +175,6 @@
     </div>
 </div>
 
-<!-- Telechargement de fichier -->
 <!-- Modal -->
 <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

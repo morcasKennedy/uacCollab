@@ -161,9 +161,9 @@ class Project_file {
             projet.running AS running,
             projet.status AS status,
             etudiant.nom AS nom,
-            etudiant.nom AS postnom,
-            etudiant.nom AS prenom,
-            etudiant.nom AS genre,
+            etudiant.postnom AS postnom,
+            etudiant.prenom AS prenom,
+            etudiant.genre AS genre,
             etudiant.image AS image,
             inscription.id AS id_inscription,
             CONCAT(promotion.description, ' ',  departement.description ) AS promotion,
@@ -176,7 +176,7 @@ class Project_file {
             promotion.id = inscription.promotion AND
             departement.id = promotion.departement AND
             projet_encadreur.projet = projet.id AND
-            projet.status = ? AND projet.id = ?";
+            projet.status = ? AND projet.id = ?  GROUP BY projet.id";
         $stmt = $this->db->prepare($query);
         $stmt->execute([
             $this->status,

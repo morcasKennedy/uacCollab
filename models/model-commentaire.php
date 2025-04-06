@@ -207,4 +207,24 @@ class Commentaire {
         }
         return $result > 0 ? $result : '';
     }
+
+    public function count_reponse($commentaire_id){
+        $query = 'SELECT COUNT(*) as nb FROM commentaire WHERE filtre = ?';
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$commentaire_id]);
+    
+        $row = $stmt->fetch();
+        return ($row && $row->nb > 0) ? $row->nb : '';
+    }
+
+    public function get_reponses_by_commentaire($id_parent) {
+        $query = 'SELECT * FROM commentaire WHERE filtre = ? ORDER BY dates DESC';
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$id_parent]);
+    
+        return $stmt->fetchAll(PDO::FETCH_OBJ); //  pour récupérer TOUTES les réponses sous forme d'objet
+
+    }
+    
+    
 }
