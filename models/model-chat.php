@@ -13,6 +13,7 @@
         private $role;
 
         public function __construct($db) {
+            date_default_timezone_set('UTC');
             $this->db = $db;
             $this->date = date('Y-m-d H:i:s');
         }

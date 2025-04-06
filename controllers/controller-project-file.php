@@ -39,7 +39,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                 $name_file = 'fichier' ?? null;
                 $path = '../assets/projets/';
                 $extension = ['doc', 'docx'];
-                
+
                 if (! empty($commentaire && $name_file)){
 
                     $version = $project_file->get_version_by_project($projet_id);
@@ -68,7 +68,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                 $response['status'] = 'error';
                                 $response['content'] = 'echec d\'envoi du fichier';
                             }
-                            
+
                         }else{
                             $response['status'] = 'error';
                             $response['content'] = $result['message'];
@@ -143,9 +143,9 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 
                         if (!empty($results)) {
                             foreach ($results as $rows) {
-    
-                               
-                                ?>          
+
+
+                                ?>
 
                                     <!-- Photo de profil + nom + date -->
                                     <div class="post-header">
@@ -193,7 +193,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                     try {
                         ?>
                             <div class="comments-section">
-                                <?php 
+                                <?php
                                 $version = htmlspecialchars($_POST['version']);
                                  $comment_list = $commentaire_data->get_comment_by_version($version);
                                     foreach ($comment_list as $liste){
@@ -254,7 +254,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                                         <?php
                                     }
                                 ?>
-                                
+
                             </div>
                         <?php
                     } catch (\Throwable $th) {
@@ -426,8 +426,13 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
             case 'title_project_student':
                 $id_project = htmlspecialchars($_POST['id_project']);
                 $result = $project_file->get_project_by_id($id_project);
+                $limit = 0;
                 if(! empty($result)) {
                     foreach($result as $data) {
+                        $limit ++;
+                        if($limit > 1) {
+                            continue;
+                        }
                         ?>
                             <div class="p-3 bg-cover">
                                 <div class="justify-content-between d-flex">
@@ -466,13 +471,13 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                 try {
                     $description = htmlspecialchars($_POST['description']);
                     $id_file = htmlspecialchars($_POST['version']);
-                    
+
                     $filtre = 0;
 
                     if (! empty($description && $id_file)){
 
                         $commentaire_data->setCommentaire($description,$filtre, $user_id,$id_file, $user_role);
-    
+
                         if ($commentaire_data->create()){
                             $response['status'] = 'success';
                             $response['content'] = 'enregistrement réussi avec succès';
@@ -498,7 +503,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                 case 'save_like':
                     header('Content-Type: application/json');
                     $response = [];
-                    
+
                     try {
                         $commentId = htmlspecialchars($_POST['commentId']);
 
@@ -518,14 +523,14 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                             $commentaire_data->set_like($id, $like);
                             $response['status'] = 'success';
                             $response['content'] = 'like :' . $like;
-                            
+
                         }else {
                             $commentaire_data->add_liike($user_id, $commentId, $user_role);
                             $response['status'] = 'success';
                             $response['content'] = 'success';
                         }
                         echo json_encode($response);
-        
+
                     } catch (Exception $ex) {
                         $response['status'] = 'warning';
                         $response['content'] = 'Exception: ' . $ex->getMessage();
@@ -625,7 +630,6 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                         $response['content'] = 'Exception: ' . $ex->getMessage();
                         echo json_encode($response);
                     }
-        
                     break;
         }
     }

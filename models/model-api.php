@@ -161,6 +161,34 @@
             return $result;
         }
 
+        // Get etudiant by id
+        public  function get_etudiant_email($id) {
+            $query = 'SELECT
+                etudiant.id AS id,
+                etudiant.nom AS nom,
+                etudiant.postnom AS postnom,
+                etudiant.prenom AS prenom,
+                etudiant.telephone AS telephone,
+                etudiant.adresse AS adresse,
+                etudiant.email AS email
+            FROM
+                etudiant, inscription
+            WHERE
+                inscription.etudiant = etudiant.id AND
+                inscription.id = ?';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $id,
+            ]);
+
+            $result = '';
+            while($row = $stmt->fetch()) {
+                $result = $row->email;
+            }
+            return $result;
+        }
+
+
         // Log all users
         public function log_users($email) {
             $query = 'SELECT *

@@ -232,6 +232,20 @@ input[type="password"]::-ms-reveal {
     padding: 2px;
     border-radius: 50%;
 }
+.open {
+    display: block;
+
+    text-align: center;
+    color: white;
+    border: 0;
+    outline: 0;
+    border-radius: 5px;
+    background: #007bff;
+    margin-top: 20px;
+    text-decoration: none;
+    padding: 5px 30px;
+    margin: 10px 0;
+}
 @keyframes spin {
     0% {
         transform: rotate(0deg);

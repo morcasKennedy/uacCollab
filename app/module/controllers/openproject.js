@@ -49,7 +49,7 @@ $(document).ready(() => {
         const url = fx.get_controller_url('project-file');
 
         // connection my form with controller
-        const status = await fx.save(formData, url, 'correctionModal');
+        const status = await fx.save(formData, url, 'correctionModal', 'save');
         if(status) {
             get_data();
             get_version();
@@ -66,7 +66,7 @@ $(document).ready(() => {
         let commentId = $(this).data("id"); 
         const formData = {
             commentId: commentId,
-           
+
             action: 'save_like'
         }
 
@@ -82,7 +82,6 @@ $(document).ready(() => {
             get_comment(id);
         }
     });
-
     startRefreshing();
     // Stopper le rafraîchissement lorsqu'on clique sur "Répondre"
     $(document).on('click', '.reponse', function(e) {
@@ -169,7 +168,7 @@ $(document).ready(() => {
         const url = fx.get_controller_url('project-file');
 
         // connection my form with controller
-        const status = await fx.send(formData, url, 'correctionModal');
+        const status = await fx.send(formData, url, 'correctionModal', 'save_commentaire');
         if(status) {
             get_data();
             get_version();
@@ -182,7 +181,6 @@ $(document).ready(() => {
             get_data_version_file(id);
         }
     });
-
     // save or update comment
     $(document).on('click', '#save_collaborate', async (e) => {
         e.preventDefault();

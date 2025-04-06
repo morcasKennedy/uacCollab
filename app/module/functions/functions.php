@@ -114,6 +114,7 @@
                 $mail->Password   = 'sypm hwpw kjto ixpf'; // Utilisez un mot de passe d'application si besoin
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port       = 587;
+                $mail->CharSet    = 'UTF-8';
 
                 // Destinataires
                 $mail->setFrom('uaccollab@gmail.com', 'UAC Collab'); // Expediteur
