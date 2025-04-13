@@ -210,15 +210,21 @@ input[type="password"]::-ms-reveal {
     display: none;
 }
 
-.loading {
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #3498db;
+.loading, .loading-2 {
     border-radius: 50%;
     width: 16px;
     height: 16px;
     animation: spin 1s linear infinite;
     display: inline-block;
     margin-right: 5px;
+}
+.loading {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+}
+.loading-2 {
+    border: 3px solid #3498db;
+    border-top: 3px solid #f3f3f3;
 }
 .circle {
     width: 20px;

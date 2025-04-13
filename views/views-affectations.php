@@ -61,7 +61,11 @@
                                                             <th class="text-center">Actions</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody id="container"></tbody>
+                                                    <tbody id="container" >
+                                                        <tr class="text-center">
+                                                            <th colspan="6" class="py-2"><span class="loading-2"></span></th>
+                                                        </tr>
+                                                    </tbody>
                                                 </table>
                                             </div>
                                         </div>

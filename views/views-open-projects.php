@@ -75,10 +75,10 @@
                 </div>
                 <div class="card-body">
                     <!-- showing a title of project file -->
-                    <h1><span id="title_commentaire"></span></h1>
+                    <h1><div id="title_commentaire"></div></h1>
                     <div class="post-container">
-                        <div id="get_title_comment"></div>
-                        <div id="get_comment"></div>
+                        <div id="get_title_comment"><div class="py-4"><span class="loading-2"></span></div><hr></div>
+                        <div id="get_comment"><span class="loading-2"></span></div>
                     </div>
 
                     <?php
@@ -88,7 +88,7 @@
                                 <div class="mb-3">
                                     <textarea class="form-control" id="description" name="description" placeholder="Votre commentaire..." rows="3" required></textarea>
                                 </div>
-                                <button type="button" id="save_commentaire" class="btn btn-primary">Envoyer</button>
+                                <button type="button" id="save_commentaire" class="btn btn-primary">Commenter</button>
                             </div>
                             <?php
                         }else{
@@ -139,7 +139,7 @@
                         <option value="">Chargement en cours...</option>
                     </select>
                 </div>
-                <button id="save_collaborate" class="btn btn-primary">Envoyer</button>
+                <button id="save_collaborate" class="btn btn-primary">Enregistrer</button>
             </div>
         </div>
     </div>

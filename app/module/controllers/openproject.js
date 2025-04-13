@@ -6,7 +6,6 @@ function startRefreshing() {
         clearInterval(refreshInterval); // S'assurer qu'on ne crée pas plusieurs intervalles
     }
     refreshInterval = setInterval(() => {
-        console.log("Actualisation automatique en cours...");
         const id = fx.get_value('version');
         if (id){
             get_title(id);
@@ -49,7 +48,7 @@ $(document).ready(() => {
         // get path to controller files
         const url = fx.get_controller_url('project-file');
         // connection my form with controller
-        const status = await fx.save(formData, url, 'correctionModal', 'save');
+        const status = await fx.save(formData, url, 'correctionModal', '#save');
         if(status) {
             get_data();
             get_version();
@@ -145,7 +144,7 @@ $(document).ready(() => {
         };
         const url = fx.get_controller_url('project-file');
         // Envoi des données via fx.send
-        const status = await fx.send(formData, url, 'correctionModal');
+        const status = await fx.send(formData, url, null, '.envoyer-reponse');
         if (status) {
             // Vider le champ et cacher le formulaire
             $("#reponse-text-" + commentId).val('');
@@ -172,7 +171,7 @@ $(document).ready(() => {
         // get path to controller files
         const url = fx.get_controller_url('project-file');
         // connection my form with controller
-        const status = await fx.send(formData, url, 'correctionModal', 'save_commentaire');
+        const status = await fx.send(formData, url, 'correctionModal', '#save_commentaire');
         if(status) {
             get_data();
             get_project();
@@ -196,7 +195,7 @@ $(document).ready(() => {
         // get path to controller files
         const url = fx.get_controller_url('project-file');
         // connection my form with controller
-        await fx.save(formData, url, 'encadreurModal');
+        await fx.save(formData, url, 'encadreurModal', '#save_collaborate');
     });
 
     // get all project file by project
@@ -330,8 +329,12 @@ $(document).ready(() => {
     $('#version').on('change', function(){
         let id = $(this).val();
         get_title(id);
+
         setTimeout(()=>{
             let id_file = fx.get_value('id_file');
+            $('#get_comment').html('<span class="loading-2"></span>');
+            $('#get_title_comment').html('<div class="py-4"><span class="loading-2"></span></div><hr>');
+
             if (id_file){
                 get_comment(id_file);
             }

@@ -102,19 +102,6 @@
 
                     $size = 50 * 1024 * 1024; // 5 Mo
 
-
-                    // if(! empty($chat->get_message_no_repondu($id_project, $directeur))) {
-                    //     $response['status'] = 'info';
-                    //     $response['content'] = 'exist directeur: ' . $directeur . ' project: ' . $id_project;
-                    //     print json_encode($response);
-                    //     exit;
-                    // } else {
-                    //     $response['status'] = 'info';
-                    //     $response['content'] = 'n\'existe pas directeur: ' . $directeur . ' project: ' . $id_project;
-                    //     print json_encode($response);
-                    //     exit;
-                    // }
-
                     $res = Functions::upload_file($file, $folder, null, $ext, $size);
                     if($res['success']) {
                         $file = $res['message'];

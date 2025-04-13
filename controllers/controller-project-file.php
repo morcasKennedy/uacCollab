@@ -141,14 +141,7 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                             </div>
                         <?php
                     }
-                } else {
-                    ?>
-                        <div class="text-center text-warning">
-                            Paramètres manquants
-                        </div>
-                    <?php
                 }
-
             } catch (PDOException $e) {
                 ?>
                     <div class="text-danger text-center">
@@ -164,39 +157,43 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                         <?php
                             $version = htmlspecialchars($_POST['version']);
                             $comment_list = $commentaire_data->get_comment_by_version($version);
-                            foreach ($comment_list as $liste){
-                                $auteur = " ";
-                                if ($liste->role == 'encadreur'){
-                                    $auteur = $api->get_encadreur_id($liste->user);
-                                }elseif ($liste->role == 'etudiant'){
-                                    $auteur = $api->get_etudiant_id($liste->user);
-                                }
-                                ?>
-                                    <div class="comment">
-                                        <img src="assets/etudiants/1.png" alt="Profil" class="comment-avatar">
-                                        <div class="comment-details">
-                                            <strong><?=$auteur ?></strong>
-                                            <small><?= Functions::date_format($liste->dates) . ', ' . Functions::local_time($liste->dates, $user_timezone) ?></small>
-                                            <p><?= $liste->contenu ?></p>
-                                            <div class="comment-actions">
-                                                <span class="like" data-id="<?=$liste->id ?>">
-                                                    <i class="bi bi-heart<?=$commentaire_data->toggle_like($user_id, $liste->id, $user_role)?> text-danger"></i>
-                                                    J'aime
-                                                    <small class="love"><?=$commentaire_data->count_like($liste->id)?></small>
-                                                </span>
-                                                <span class="reponse" data-id="<?=$liste->id?>">Répondre <?= $commentaire_data->count_reponse($liste->id) ?></span>
-                                                <!-- Nombre de réponses cliquable -->
-                                                <small class="count text-primary" data-id="<?= $liste->id ?>"></small> <br>
-                                            </div>
-                                            <div class="zone-reponse mt-2" id="zone-reponse-<?= $liste->id ?>" style="display: none;"></div>
-                                            <!-- Formulaire de réponse (caché par défaut) -->
-                                            <div id="reponse-form-<?=$liste->id?>" class="reponse-form" style="display: none;">
-                                                <textarea id="reponse-text-<?=$liste->id?>" placeholder="Écrivez votre réponse ici..." class="form-control"></textarea>
-                                                <button class="btn btn-primary btn-sm envoyer-reponse mt-2 mb-2" data-id="<?=$liste->id?>">Envoyer</button>
+                            if(! empty($comment_list)) {
+                                foreach ($comment_list as $liste){
+                                    $auteur = " ";
+                                    if ($liste->role == 'encadreur'){
+                                        $auteur = $api->get_encadreur_id($liste->user);
+                                    }elseif ($liste->role == 'etudiant'){
+                                        $auteur = $api->get_etudiant_id($liste->user);
+                                    }
+                                    ?>
+                                        <div class="comment">
+                                            <img src="assets/etudiants/1.png" alt="Profil" class="comment-avatar">
+                                            <div class="comment-details">
+                                                <strong><?=$auteur ?></strong>
+                                                <small><?= Functions::date_format($liste->dates) . ', ' . Functions::local_time($liste->dates, $user_timezone) ?></small>
+                                                <p><?= $liste->contenu ?></p>
+                                                <div class="comment-actions">
+                                                    <span class="like" data-id="<?=$liste->id ?>">
+                                                        <i class="bi bi-heart<?=$commentaire_data->toggle_like($user_id, $liste->id, $user_role)?> text-danger"></i>
+                                                        J'aime
+                                                        <small class="love"><?=$commentaire_data->count_like($liste->id)?></small>
+                                                    </span>
+                                                    <span class="reponse" data-id="<?=$liste->id?>">Répondre <?= $commentaire_data->count_reponse($liste->id) ?></span>
+                                                    <!-- Nombre de réponses cliquable -->
+                                                    <small class="count text-primary" data-id="<?= $liste->id ?>"></small> <br>
+                                                </div>
+                                                <div class="zone-reponse mt-2" id="zone-reponse-<?= $liste->id ?>" style="display: none;"></div>
+                                                <!-- Formulaire de réponse (caché par défaut) -->
+                                                <div id="reponse-form-<?=$liste->id?>" class="reponse-form" style="display: none;">
+                                                    <textarea id="reponse-text-<?=$liste->id?>" placeholder="Écrivez votre réponse ici..." class="form-control"></textarea>
+                                                    <button class="btn btn-primary btn-sm envoyer-reponse mt-2 mb-2" data-id="<?=$liste->id?>">Répondre</button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                <?php
+                                    <?php
+                                }
+                            } else {
+                                ?><b>Aucun commentaire disponible pour cette version</b><?php
                             }
                         ?>
                     </div>
