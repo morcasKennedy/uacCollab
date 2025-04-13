@@ -366,4 +366,19 @@
             return $result;
         }
 
+        public function get_send_email_encadreur($projet){
+            $query = "SELECT encadreur.nom, encadreur.postnom, encadreur.prenom, encadreur.email FROM encadreur, projet_encadreur WHERE encadreur.id=projet_encadreur.encadreur AND projet_encadreur.projet = ?  AND projet_encadreur.status = ?";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $projet,
+                $this->status
+            ]);
+
+            $result = [];
+            while($row = $stmt->fetch()) {
+                $result[] = $row;
+            }
+            return $result;
+        }
+
     }

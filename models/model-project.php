@@ -74,7 +74,6 @@
                 $this->status,
             ]);
         }
-
         // get user of one project
         public function get_users_project($projet) {
             $query = 'SELECT
@@ -98,6 +97,22 @@
                 $result[] = $row;
             }
             return $result;
+        }
+
+        public function get_exist_encadreur_by_project($projet, $encadreur) {
+            $query = 'SELECT COUNT(*) AS nb FROM projet_encadreur WHERE projet = ? AND encadreur = ? AND status = ?';
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                $projet,
+                $encadreur,
+                $this->status,
+            ]);
+
+            $result = 0;
+            while($row = $stmt->fetch()) {
+                $result = $row->nb;
+            }
+            return $result > 0 ? true : false;
         }
 
         // get student project
