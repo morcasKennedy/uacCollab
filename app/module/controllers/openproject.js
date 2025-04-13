@@ -49,7 +49,7 @@ $(document).ready(() => {
         // get path to controller files
         const url = fx.get_controller_url('project-file');
         // connection my form with controller
-        const status = await fx.save(formData, url, 'correctionModal');
+        const status = await fx.save(formData, url, 'correctionModal', 'save');
         if(status) {
             get_data();
             get_version();
@@ -161,7 +161,6 @@ $(document).ready(() => {
             }
         }
     });
-
     // save or update comment
     $(document).on('click', '#save_commentaire', async (e) => {
         e.preventDefault();
@@ -173,7 +172,7 @@ $(document).ready(() => {
         // get path to controller files
         const url = fx.get_controller_url('project-file');
         // connection my form with controller
-        const status = await fx.send(formData, url, 'correctionModal');
+        const status = await fx.send(formData, url, 'correctionModal', 'save_commentaire');
         if(status) {
             get_data();
             get_project();
@@ -199,6 +198,7 @@ $(document).ready(() => {
         // connection my form with controller
         await fx.save(formData, url, 'encadreurModal');
     });
+
     // get all project file by project
     function get_data() {
         const data = {

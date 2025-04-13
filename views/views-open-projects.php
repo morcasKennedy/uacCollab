@@ -80,6 +80,7 @@
                         <div id="get_title_comment"></div>
                         <div id="get_comment"></div>
                     </div>
+
                     <?php
                         if (! empty($comment_project)){
                             ?>

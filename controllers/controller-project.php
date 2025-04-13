@@ -33,6 +33,37 @@
                     $backround = Functions::generate_color();
                     $running = 0;
 
+                    $etudiant_noms = $API->get_etudiant_id($etudiant) ?? null;
+                    $etudiant_email = $API->get_etudiant_email($etudiant) ?? null;
+                    $objet = "Confirmation de création de projet";
+                    $content = "
+                        Bonjour <b>$etudiant_noms</b>,
+                        Nous avons le plaisir de vous informer que votre projet a été créé avec succès.
+                        <ul>
+                            <li><b>Titre</b>: $title</li>
+                            <li><b>Description</b>: $description</li>
+                        </ul>
+                        Pour plus d’informations, cliquez sur le lien ci-dessous : <a   href='http://localhost/uacCollab/projects'>En savoir plus</a> pour en savoir plus.
+                        <br>
+                        <br>
+                        <a style='
+                            text-align: center;
+                            color: white;
+                            border: 0;
+                            outline: 0;
+                            border-radius: 5px;
+                            background: #007bff;
+                            padding: 5px 30px;
+                            text-decoration: none;
+                            padding: 10px 30px;
+                            margin: 10px 0;
+                        ' href='http://localhost/uacCollab/projects'>Ouvrir avec UAC collab<a>
+                        <br>
+                        <br>
+                        Cordialement,
+                        <a href='mailto:uaccolla@gmail.com'>uaccolla</a>
+                    ";
+
                     if(! empty($title) && ! empty($description) && ! empty($etudiant)) {
                         $project->Project($title, $description, $etudiant, $user_id, $backround, $running);
 
@@ -48,20 +79,23 @@
                             // else, display a message that the student has already been affected
                             if($status == '0') {
                                 $project->restaure($id_restaure);
+                                $_SESSION['user']['sub_role'] = 'Directeur';
                                 $response['status'] = 'success';
                                 $response['content'] = 'Le projet crée avec succès';
+                                Functions::send_mail($etudiant_email, $etudiant_noms, $objet, $content);
                             } else {
                                 $response['status'] = 'info';
                                 $response['content'] = 'Cet projet a déjà été creé';
                             }
                         } else {
-                            // insert the pro$project
+                            // insert the project
                             if($project->create()) {
+                                $_SESSION['user']['sub_role'] = 'Directeur';
                                 $response['status'] = 'success';
                                 $response['content'] = 'Le projet crée avec succès';
-
                                 $project_id = $project->get_last_project();
                                 $project->create_encadreur($project_id, $user_id, true);
+                                Functions::send_mail($etudiant_email, $etudiant_noms, $objet, $content);
                             } else {
                                 $response['status'] = 'error';
                                 $response['content'] = 'Erreur lors de l\'enregistrement de projet';
@@ -72,8 +106,6 @@
                         $response['status'] = 'info';
                         $response['content'] = 'Veuillez compléter les champs marqués par <b class="star">*</b>';
                     }
-
-
                 } catch(Exception $ex) {
                     $response['status'] = 'warning';
                     $response['content'] = 'Exception ' . $ex->getMessage();
@@ -81,10 +113,12 @@
                 print json_encode($response);
             break;
             case 'load':
+                $annee= $API->get_last_year();
                 $encadreur_id = ! empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
-                $result = $project->get_all();
+                $result = $project->get_all($annee);
                 $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
                 $count = false;
+                $limit = 0;
                 if(! empty($result)) {
                     foreach($result as $data) {
                         // Filter project for encadreurs
@@ -116,6 +150,10 @@
                             // Filter project for students
                         } elseif($data->id_inscription == $encadreur_id && $role == 'etudiant') {
                             $count = true;
+                            $limit += 1;
+                            if($limit > 1) {
+                                continue;
+                            }
                             ?>
                                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 p-2">
                                     <div class="card p-0 ">
@@ -164,10 +202,12 @@
                 }
             break;
             case 'get_conversation':
+                $annee = $API->get_last_year();
                 $encadreur_id = ! empty($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0;
-                $result = $project->get_all();
+                $result = $project->get_all($annee);
                 $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
                 $count = false;
+                $limit = 0;
                 if(! empty($result)) {
                     foreach($result as $data) {
                         $id_project = $data->id;
@@ -225,6 +265,10 @@
                         // Filter project for students
                         if($data->etudiant == $encadreur_id && $role == 'etudiant') {
                             $count = true;
+                            $limit ++;
+                            if($limit > 1) {
+                                continue;
+                            }
                             ?>
                                <a onclick="redirect('./chat-<?=$data->id ?>')" class="list-group-item list-group-item-action">
                                     <div class="d-flex">
@@ -336,8 +380,6 @@
                                     <?php
                                 }
                             ?>
-
-
                         </div>
                     </a>
                 <?php

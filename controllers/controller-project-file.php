@@ -37,7 +37,6 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                 $name_file = 'fichier' ?? null;
                 $path = '../assets/projets/';
                 $extension = ['doc', 'docx'];
-
                 $newId = $project_file->count();
 
                 $result = Functions::upload_file($name_file, $path, $newId, $extension);
@@ -158,7 +157,6 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
                 <?php
             }
         break;
-
         case 'get_comment':
             try {
                 ?>
@@ -352,8 +350,13 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
             case 'title_project_student':
                 $id_project = htmlspecialchars($_POST['id_project']);
                 $result = $project_file->get_project_by_id($id_project);
+                $limit = 0;
                 if(! empty($result)) {
                     foreach($result as $data) {
+                        $limit ++;
+                        if($limit > 1) {
+                            continue;
+                        }
                         ?>
                             <div class="p-3 bg-cover">
                                 <div class="justify-content-between d-flex">

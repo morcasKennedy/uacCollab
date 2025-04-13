@@ -95,6 +95,7 @@
                 try {
                     $email = htmlspecialchars($_POST['email']);
                     $password = htmlspecialchars($_POST['password']);
+                    $remember = htmlspecialchars($_POST['remember']);
 
                     // Check if it is an email address, a phone number, or a matriculation number.
                     $label = '';
@@ -110,22 +111,41 @@
                     if(! empty($email) && ! empty($password)) {
                         $result = $API->log_users($email);
                         $result2 = $API->log_etudiants($email);
+                        $expiration = time() + (30 * 24 * 60 * 60); // 30 jours pour que le setcookie expire
 
                         // Authenticate users (supervisors).
                         if(! empty($result)) {
                             foreach($result as $row) {
                                 if($row->mot_de_passe == $password) {
                                     $last_year = $API->get_last_year();
+                                    $sub_role = '';
                                     if($API->get_admin($row->id, $last_year)) {
                                         $_SESSION['user']['sub_role'] = 'Directeur';
+                                        $sub_role = 'Directeur';
                                     } else {
                                         $_SESSION['user']['sub_role'] = 'encadreur';
+                                        $sub_role = 'encadreur';
                                     }
 
                                     $_SESSION['user']['id'] = $row->id;
                                     $_SESSION['user']['role'] = 'encadreur';
                                     $_SESSION['user']['name'] = $row->nom . ' ' . $row->prenom;
                                     $_SESSION['user']['path'] = $row->image;
+
+                                    if($remember) {
+                                        setcookie('sub_role', $sub_role, $expiration, "/");
+                                        setcookie('user_id', $row->id, $expiration, "/");
+                                        setcookie('user_role', 'encadreur', $expiration, "/");
+                                        setcookie('user_name', $row->nom . ' ' . $row->prenom, $expiration, "/");
+                                        setcookie('user_path', $row->image, $expiration, "/");
+                                    } else {
+                                        setcookie("sub_role", "", time() - 3600, "/");
+                                        setcookie("user_id", "", time() - 3600, "/");
+                                        setcookie("user_role", "", time() - 3600, "/");
+                                        setcookie("user_name", "", time() - 3600, "/");
+                                        setcookie("user_path", "", time() - 3600, "/");
+                                    }
+
                                     $response['status'] = 'success';
                                     $response['content'] = 'Connexion reussie';
 
@@ -142,6 +162,19 @@
                                     $_SESSION['user']['role'] = 'etudiant';
                                     $_SESSION['user']['name'] = $row->nom . ' ' . $row->prenom;
                                     $_SESSION['user']['path'] = $row->image;
+
+                                    if($remember) {
+                                        setcookie('user_id', $row->id, $expiration, "/");
+                                        setcookie('user_role', 'etudiant', $expiration, "/");
+                                        setcookie('user_name', $row->nom . ' ' . $row->prenom, $expiration, "/");
+                                        setcookie('user_path', $row->image,$expiration, "/");
+                                    } else {
+                                        setcookie("user_id", "", time() - 3600, "/");
+                                        setcookie("user_role", "", time() - 3600, "/");
+                                        setcookie("user_name", "", time() - 3600, "/");
+                                        setcookie("user_path", "", time() - 3600, "/");
+                                    }
+
                                     $response['status'] = 'success';
                                     $response['content'] = 'Connexion reussie';
                                 } else {

@@ -3,6 +3,7 @@
     $title = 'Mes projets';
     $page_title = 'UAC collab | ' . $title;
     ob_start();
+    session_start();
 
     $role = ! empty($_SESSION['user']['role']) ? $_SESSION['user']['role'] : '';
 
