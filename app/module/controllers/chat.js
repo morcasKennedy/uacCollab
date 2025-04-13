@@ -54,7 +54,7 @@ $(document).ready(()=> {
         };
 
         const url = fx.get_controller_url('chat');
-        const status = await fx.send(data, url);
+        const status = await fx.insert(data, url, null, '#save');
 
         if (status) {
             clear_preview();

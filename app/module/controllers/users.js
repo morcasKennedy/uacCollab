@@ -14,7 +14,7 @@ $(document).ready(()=> {
         };
 
         const url = fx.get_controller_url('api');
-        const status = await fx.save(data, url);
+        const status = await fx.save(data, url, null, '#login');
 
         if (status) {
             setInterval(()=> {

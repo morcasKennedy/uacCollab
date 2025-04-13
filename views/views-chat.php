@@ -12,14 +12,30 @@
     require_once 'includes/chat-style.php'
 ?>
 
+<style>
+    .nothing {
+        width: 100%;
+        height: 60vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .nothing .loading-2 {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #3498db;
+    border-top: 5px solid #f3f3f3;
+    }
+</style>
+
 <title><?=$page_title ?></title>
 <div class="pc-container">
     <div class="pc-conten py-3">
         <div class="chat-container">
             <div class="chat-header" id="header">
-
+                <div class="p-2"><span class="loading-2"></span></div>
             </div>
-            <div class="chat-box" id="chat_container" ></div>
+            <div class="chat-box" id="chat_container" ><div class="py-4 nothing"><span class="loading-2"></span></div></div>
             <!-- Bloc pour la prévisualisation -->
             <div id="filePreview" style="display:none; margin-top: 10px;">
 

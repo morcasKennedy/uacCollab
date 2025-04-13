@@ -37,7 +37,7 @@ $(document).ready(function() {
         };
 
         const url = fx.get_controller_url('affectation');
-        const status = await fx.save(data, url, 'exampleModalToggle');
+        const status = await fx.save(data, url, 'exampleModalToggle', '#save');
 
         if (status) {
           get_data();
