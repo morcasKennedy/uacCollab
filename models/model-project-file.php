@@ -205,4 +205,33 @@ class Project_file {
         $stmt = $this->db->prepare($query);
         return $stmt->execute([$this->status, $id]);
     }
+
+    public function get_send_email_encadreur($projet){
+        $query = "SELECT encadreur.nom, encadreur.postnom, encadreur.prenom, encadreur.email, projet.titre FROM encadreur, projet_encadreur, projet WHERE encadreur.id=projet_encadreur.encadreur AND projet.id=projet_encadreur.projet AND projet_encadreur.projet = ?  AND projet_encadreur.status = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            $projet,
+            $this->status
+        ]);
+
+        $result = [];
+        while($row = $stmt->fetch()) {
+            $result[] = $row;
+        }
+        return $result;
+    }
+    public function get_send_email_encadreur_by_id($encadreur){
+        $query = "SELECT encadreur.nom, encadreur.postnom, encadreur.prenom, encadreur.email FROM encadreur WHERE encadreur.id = ? AND encadreur.status = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            $encadreur,
+            $this->status
+        ]);
+
+        $result = [];
+        while($row = $stmt->fetch()) {
+            $result[] = $row;
+        }
+        return $result;
+    }
 }
