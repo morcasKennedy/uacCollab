@@ -33,40 +33,61 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
             try {
                 $commentaire = htmlspecialchars($_POST['commentaire']);
                 $projet_id = htmlspecialchars($_POST['id_project']);
-
                 $name_file = 'fichier' ?? null;
                 $path = '../assets/projets/';
                 $extension = ['doc', 'docx'];
                 $newId = $project_file->count();
 
+                // Upload fichier
                 $result = Functions::upload_file($name_file, $path, $newId, $extension);
-
-                $version = $project_file->get_version_by_project($projet_id);
-
-                $project_file->Project_files($projet_id,$name_file, $user_id,$commentaire, $type, $version);
-
-                if(!$result['success']) {
+                if (!$result['success']) {
                     $response['status'] = 'info';
                     $response['content'] = $result['message'];
-                    print json_encode($response);
+                    echo json_encode($response);
                     exit;
                 }
 
-                if ($project_file->create()){
+                // Préparation données
+                $version = $project_file->get_version_by_project($projet_id);
+                $project_file->Project_files($projet_id, $name_file, $user_id, $commentaire, $type, $version);
+
+                // Enregistrement en BDD (une seule fois)
+                if ($project_file->create()) {
+                    $data_email = $project_file->get_send_email_encadreur($projet_id);
+                    if (!empty($data_email)) {
+                        foreach ($data_email as $encadreur) {
+                            $email = $encadreur->email;
+                            $full_name = $encadreur->nom . ' ' . $encadreur->postnom . ' ' . $encadreur->prenom;
+                            $titre_project = $encadreur->titre;
+
+                            $subject = "Nouveau fichier ajouté au projet";
+                            $body = "
+                                Bonjour <strong>{$full_name}</strong>,<br><br>
+                                Un nouveau fichier a été ajouté au projet #{$titre_project}.<br>
+                                Merci de consulter la plateforme pour plus de détails.<br><br>
+                                Cordialement,<br>
+                                UAC Collab
+                            ";
+
+                            Functions::send_mail($email, $full_name, $subject, $body);
+                        }
+                    }
+
                     $response['status'] = 'success';
-                    $response['content'] = 'enregistrement réussi avec succès';
+                    $response['content'] = 'Enregistrement réussi avec succès.';
+
                 } else {
                     $response['status'] = 'error';
                     $response['content'] = 'Erreur lors de l\'enregistrement en base.';
                 }
-
             } catch (Exception $ex) {
                 $response['status'] = 'warning';
                 $response['content'] = 'Exception: ' . $ex->getMessage();
-
             }
+
             echo json_encode($response);
         break;
+
 
         // get all project_files
         case 'load':
@@ -518,6 +539,25 @@ if (isset($_POST['action']) && !empty($_POST['action'])) {
 
                     if (! empty($encadreur && $id_project)){
                         if($projet->create_encadreur($id_project, $encadreur)) {
+
+                            $data_email = $project_file->get_send_email_encadreur_by_id( $encadreur);
+                            if (!empty($data_email)) {
+                                foreach ($data_email as $encadreur) {
+                                    $email = $encadreur->email;
+                                    $full_name = $encadreur->nom . ' ' . $encadreur->postnom . ' ' . $encadreur->prenom;
+
+                                    $subject = "Nouveau fichier ajouté au projet";
+                                    $body = "
+                                        Bonjour <strong>{$full_name}</strong>,<br><br>
+                                        Vous avez été ajouté comme encadreur dans un projet...<br>
+                                        Merci de consulter la plateforme pour plus de détails.<br><br>
+                                        Cordialement,<br>
+                                        UAC Collab
+                                    ";
+
+                                    Functions::send_mail($email, $full_name, $subject, $body);
+                                }
+                            }
                             $response['status'] = 'success';
                             $response['content'] = 'Vous avez ajouté un collaborateur de ce projet';
                         } else {

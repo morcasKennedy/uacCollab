@@ -3,7 +3,7 @@
         private $host = "localhost";
         private $db_name = "uaccolab";
         private $username = "root";
-        private $password = "root";
+        private $password = "";
         public $db;
 
         public function get_connexion() {
